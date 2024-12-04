@@ -7,6 +7,7 @@ const cookieParser =require("cookie-parser")
 const cors=require("cors")
 const dotenv=require("dotenv")
 const userRoutes=require("./routes/User")
+const blockchainRoutes=require("./routes/Blockchain")
 dotenv.config()
 
 const PORT=process.env.PORT||4000;
@@ -23,6 +24,7 @@ app.use(
     )
 )
 app.use("/User",userRoutes);
+app.use("/Blockchain",blockchainRoutes);
 app.get("/",(req,res)=>{
     return res.json({
 		success:true,
