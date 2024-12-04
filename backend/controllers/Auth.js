@@ -10,21 +10,15 @@ const mailSender=require("../utils/mailSender")
 
 
 
-// Send OTP For Email Verification
 exports.sendotp = async (req, res) => {
 	try {
 		const { email } = req.body;
         console.log(req.body);
 
 
-		// Check if user is already present
-		// Find user with provided email
 		const checkUserPresent = await User.findOne({ email });
-		// to be used in case of signup
 
-		// If user found with provided email
 		if (checkUserPresent) {
-			// Return 401 Unauthorized status code with error message
 			return res.status(401).json({
 				success: false,
 				message: `User is Already Registered`,
@@ -57,4 +51,41 @@ exports.sendotp = async (req, res) => {
 		console.log(error.message);
 		return res.status(500).json({ success: false, error: error.message });
 	}
+};
+
+exports.signup = async (req, res) => {
+    try {
+        const { email, firstName, lastName, password } = req.body;
+
+
+        const checkUser = await User.findOne({ email });
+        if (checkUser) {
+            return res.status(401).json({
+                success: false,
+                message: "User is already registered",
+            });
+        }
+        
+		
+
+        const hashedPassword = await User.hashPassword(password);
+
+        const newUser = new User({
+            fullName: { firstName, lastName },
+            email,
+            password: hashedPassword,
+            image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`, 
+        });
+
+        await newUser.save();
+
+        res.status(201).json({
+            success: true,
+            message: "User registered successfully",
+        });
+
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, error: error.message });
+    }
 };

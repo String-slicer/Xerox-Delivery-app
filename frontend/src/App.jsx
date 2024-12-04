@@ -9,7 +9,6 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignupPage/>} />
       </Routes>
-      hello
     </div>
   )
 }
