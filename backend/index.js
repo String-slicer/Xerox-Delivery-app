@@ -1,6 +1,7 @@
 const express = require('express')
 const app= express();
-
+const http =require("http");
+const server=http.createServer(app)
 const database=require("./config/database")
 
 const cookieParser =require("cookie-parser")
@@ -32,6 +33,6 @@ app.get("/",(req,res)=>{
 	});
 })
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
 	console.log(`App is running at ${PORT}`)
 })
