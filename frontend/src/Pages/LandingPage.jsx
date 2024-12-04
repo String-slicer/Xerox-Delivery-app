@@ -48,7 +48,7 @@ const LandingPage = () => {
         <h3 className="text-3xl font-semibold mb-6">Ready to Experience the Future of Document Delivery?</h3>
         <p className="text-xl mb-8">Join us now to get started with secure document sharing and real-time tracking.</p>
         <a
-          href="#signup"
+          href="signup"
           className="bg-[#0E0A19] text-yellow-400 font-semibold px-8 py-4 rounded-full shadow-lg transition transform hover:scale-105 hover:bg-yellow-500"
         >
           Sign Up Now

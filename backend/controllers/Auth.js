@@ -89,3 +89,34 @@ exports.signup = async (req, res) => {
         return res.status(500).json({ success: false, error: error.message });
     }
 };
+
+exports.login=async (req,res)=>{
+   
+	try{
+		const {email,password}=req.body;
+		console.log(email)
+
+		const checkUser=await User.findOne({email});
+		if (!checkUser) {
+            return res.status(401).json({
+                success: false,
+                message: "Entered email does not exists",
+            });
+        }
+		const isPasswordValid = await bcrypt.compare(password, checkUser.password);
+		if (!isPasswordValid) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid credentials. Please try again.",
+            });
+        }
+		res.status(200).json({
+            success: true,
+            message: "Login successful",
+        });
+	}
+	catch(error){
+		console.error(error.message);
+        return res.status(500).json({ success: false, error: error.message });
+	}
+};
