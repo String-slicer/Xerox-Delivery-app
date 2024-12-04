@@ -8,6 +8,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
       </Routes>
       {/* hello world */}
+    
     </div>
   )
 }
