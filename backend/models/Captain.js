@@ -16,61 +16,71 @@ const captainSchema =new mongoose.Schema({
             trim:true,
             minlength:[3,"Last name must be at least 3 characters long"],
         }
-},
-email:{
-    type:String,
-    required:true,
-    trim:true,
-},
-password:{
-    type:String,
-    required:true,
-},
-additionalDetails:{
-    type:mongoose.Schema.Types.ObjectId,
-    required:true,
-    ref:"Profile",
-},
-token:{
-    type:String,
-},
-resetPasswordExpires:{
-    type:Date,
-},
-image:{
-    type:String,
-    required:true,
-},
-socketId:{
-    type:String,
-},
-status: {
-    type: String,
-    enum: [ 'active', 'inactive' ],
-    default: 'inactive',
-},
-
-vehicle: {
-    color: {
-        type: String,
-        required: true,
-        minlength: [ 3, 'Color must be at least 3 characters long' ],
+    } ,
+    email:{
+        type:String,
+        required:true,
+        trim:true,
     },
-    plate: {
+    password:{
+        type:String,
+        required:true,
+    },
+    additionalDetails:{
+        type:mongoose.Schema.Types.ObjectId,
+        required:true,
+        ref:"Profile",
+    },
+    token:{
+        type:String,
+    },
+    resetPasswordExpires:{
+        type:Date,
+    },
+    image:{
+        type:String,
+        required:true,
+    },
+    socketId:{
+        type:String,
+    },
+    status: {
         type: String,
-        required: true,
-        minlength: [ 3, 'Plate must be at least 3 characters long' ],
+        enum: [ 'active', 'inactive' ],
+        default: 'inactive',
     },
 
-},
-location: {
-    ltd: {
-        type: Number,
+    vehicle: {
+        color: {
+            type: String,
+            required: true,
+            minlength: [ 3, 'Color must be at least 3 characters long' ],
+        },
+        plate: {
+            type: String,
+            required: true,
+            minlength: [ 3, 'Plate must be at least 3 characters long' ],
+        },
+
     },
-    lng: {
-        type: Number,
-    }
-},
+    location: {
+        ltd: {
+            type: Number,
+        },
+        lng: {
+            type: Number,
+        }
+    },
+    orders: {
+        type: [ mongoose.Schema.Types.ObjectId ],
+        ref: 'Order',
+    },
+    contact: {
+        type: String,
+        required: true,
+        minlength: [ 10, 'Contact must be at least 10 characters long' ],
+    },
+    
 
 })
 captainSchema.methods.generateAuthToken = function () {

@@ -46,7 +46,24 @@ const userSchema = new mongoose.Schema({
     },
     socketId:{
         type:String,
-    }
+    },
+    orders: {
+        type: [ mongoose.Schema.Types.ObjectId ],
+        ref: 'Order',
+    },
+    contact: {
+        type: String,
+        required: true,
+        minlength: [ 10, 'Contact must be at least 10 characters long' ],
+    },
+    location: {
+        ltd: {
+            type: Number,
+        },
+        lng: {
+            type: Number,
+        }
+    },
     
 },{timestamps:true});
 
