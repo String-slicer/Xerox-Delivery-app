@@ -14,7 +14,7 @@ const orderSchema = new mongoose.Schema(
     },
     deliveryPartnerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "DeliveryPartner",
+      ref: "Captain",
       default: null, // Assigned later
     },
     documents: [
@@ -92,6 +92,14 @@ const orderSchema = new mongoose.Schema(
     deliveryAddress: {
       type: String,
       required: true,
+    },
+    deliverylocation: {
+      ltd: {
+        type: Number,
+      },
+      lng: {
+        type: Number,
+      },
     },
     orderedAt: {
       type: Date,
