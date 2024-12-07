@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-// Fix for marker icons
+// Configure default marker icons
 const defaultIcon = L.icon({
   iconUrl: markerIcon,
   shadowUrl: markerShadow,
@@ -14,52 +14,81 @@ const defaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = defaultIcon;
 
-// Component to disable default zoom control
-const DisableZoomControls = () => {
-  const map = useMap();
-  map.zoomControl.remove(); // Remove the zoom control
-  return null;
-};
-
 const Map = () => {
   const [currentPosition, setCurrentPosition] = useState(null);
+  const [accuracy, setAccuracy] = useState(null);
+  const [isError, setIsError] = useState(false);
 
-  // Fetch user's current location
   useEffect(() => {
-    if (navigator.geolocation) {
+    // First, attempt to get the current position
+    const updatePosition = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const { latitude, longitude } = position.coords;
+          const { latitude, longitude, accuracy } = position.coords;
           setCurrentPosition([latitude, longitude]);
+          setAccuracy(accuracy);
+          setIsError(false);
         },
         (error) => {
           console.error("Error fetching location:", error);
-          alert("Unable to fetch location. Please enable location services.");
+          setIsError(true);
+          alert("Unable to fetch location. Ensure location services are enabled.");
+        },
+        {
+          enableHighAccuracy: true, // Request the most accurate position available
+          timeout: 10000, // Timeout after 10 seconds
+          maximumAge: 0, // No cached location
         }
       );
-    } else {
-      alert("Geolocation is not supported by your browser.");
-    }
+    };
+
+    updatePosition(); // Get initial position
+
+    // Watch the position and update continuously
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude, accuracy } = position.coords;
+        setCurrentPosition([latitude, longitude]);
+        setAccuracy(accuracy); // Update accuracy
+        setIsError(false);
+      },
+      (error) => {
+        console.error("Error fetching location:", error);
+        setIsError(true);
+        alert("Unable to fetch location. Ensure location services are enabled.");
+      },
+      {
+        enableHighAccuracy: true, // Request the most accurate position available
+        timeout: 10000, // Timeout after 10 seconds
+        maximumAge: 0, // No cached location
+      }
+    );
+
+    // Cleanup watcher on component unmount
+    return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
   return (
-    <div className="flex justify-center items-center h-[100%] bg-gray-100">
-      <div className="w-full max-w-4xl h-96 rounded-lg overflow-hidden shadow-lg">
+    <div className="flex justify-center items-center w-full h-full bg-gray-100">
+      <div className="w-full h-full rounded-lg overflow-hidden shadow-lg">
         {currentPosition ? (
           <MapContainer
             center={currentPosition}
-            zoom={13}
+            zoom={16} // Higher zoom for better precision
             scrollWheelZoom
             className="w-full h-full"
           >
-            <DisableZoomControls />
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <Marker position={currentPosition}>
               <Popup>
-                You are here! <br /> Latitude: {currentPosition[0]}, Longitude: {currentPosition[1]}
+                <strong>You are here!</strong>
+                <br />
+                Latitude: {currentPosition[0].toFixed(5)}, Longitude: {currentPosition[1].toFixed(5)}
+                <br />
+                Accuracy: {accuracy ? `${accuracy} meters` : "Unknown"}
               </Popup>
             </Marker>
           </MapContainer>
