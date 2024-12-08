@@ -1,10 +1,10 @@
+const express = require("express");
+const router = express.Router();
 
-const express= require("express")
-const router=express.Router()
+const { uploadFile, getFile, addStore } = require("../controllers/BlockChain");
 
-const {addFile,getFile}= require("../controllers/BlockChain");
+router.post("/uploadFile", uploadFile);
+router.post("/getFile", getFile);
+router.post("/addStore", addStore);
 
-router.post("/saveDoc",addFile)
-router.post("/getDoc",getFile)
-
-module.exports=router;
+module.exports = router;
