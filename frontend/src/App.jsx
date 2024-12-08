@@ -5,7 +5,7 @@ import SignupPage from './Pages/UserPages/signup'
 import LoginPage from './Pages/UserPages/loginpage'
 import CaptainHome from './Pages/CaptainPages/CaptainHome'
 import "leaflet/dist/leaflet.css";
-
+import UserHome from './Pages/UserPages/UserHome'
 function App() {
   return (
     <div>
@@ -14,6 +14,7 @@ function App() {
         <Route path="/userSignup" element={<SignupPage/>} />
         <Route path="/userLogin" element={<LoginPage/>} />
         <Route path="/captainhome" element={<CaptainHome/>} />
+        <Route path="/userhome" element={<UserHome/>} />
       </Routes>
     </div>
   )
