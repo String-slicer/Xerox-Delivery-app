@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
+import axios from 'axios';
 
-function OrderForm({ onClose }) {
+function OrderForm({ onClose, onSubmit }) {
   const [formData, setFormData] = useState({
     documents: [
       {
@@ -30,9 +31,28 @@ function OrderForm({ onClose }) {
     setFormData({ ...formData, documents: newDocuments });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission
+    try {
+      // Store document in IPFS
+      // const formDataToSend = new FormData();
+      // formData.documents.forEach((doc, index) => {
+      //   formDataToSend.append(`file${index}`, doc.file);
+      // });
+      // const ipfsResponse = await axios.post('https://ipfs-api-url.com/upload', formDataToSend);
+      // const cid = ipfsResponse.data.cid;
+
+      // // Store CID and order details in backend
+      // const orderDetails = {
+      //   documents: formData.documents.map(doc => ({ ...doc, cid })),
+      // };
+      // await axios.post('https://backend-api-url.com/orders', orderDetails);
+
+      // Call onSubmit to display waiting confirmation UI
+      onSubmit();
+    } catch (error) {
+      console.error('Error submitting order:', error);
+    }
   };
 
   return (
