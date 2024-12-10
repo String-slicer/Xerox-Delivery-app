@@ -5,7 +5,7 @@ const Captain=require("../models/Captain");
 const Store=require("../models/Store");
 exports.auth=async(req,res,next)=>{
     try{
-        const token=req.cookies.token||req.body.token||req.header("Autherisation").replace("Bearer ","");
+        const token=req.cookies.token||req.body.token||req.header("Autherization").replace("Bearer ","");
         if(!token){
             return res.status(401).json({
                 success:false,

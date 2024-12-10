@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -8,11 +9,14 @@ const SignupPage = () => {
     lastName: "",
     password: "",
     rePassword: "",
+    contact: "", // Added contact field
   });
 
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [serverOtp, setServerOtp] = useState(""); // Simulated OTP for verification
+
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   const handleChange = (e) => {
     setFormData({
@@ -79,8 +83,10 @@ const SignupPage = () => {
       body: JSON.stringify(formData),
     });
     const data = await response.json();
+    console.log(data)
     if (data.success) {
       alert("User registered successfully!");
+      navigate("/userLogin"); // Navigate to login page
     } else {
       alert(data.message);
     }
@@ -198,6 +204,26 @@ const SignupPage = () => {
                   value={formData.lastName}
                   onChange={handleChange}
                   placeholder="Enter your last name"
+                  className="mt-1 p-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  required
+                />
+              </div>
+
+              {/* Contact */}
+              <div>
+                <label
+                  htmlFor="contact"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Contact Number
+                </label>
+                <input
+                  type="text"
+                  id="contact"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleChange}
+                  placeholder="Enter your contact number"
                   className="mt-1 p-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   required
                 />

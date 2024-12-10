@@ -3,7 +3,7 @@ const OTP = require("../models/OTP");
 
 const otpGenerator= require("otp-generator")
 const mailSender=require("../utils/mailSender")
-
+const bcrypt = require("bcrypt");
 
 
 
@@ -55,7 +55,7 @@ exports.sendotp = async (req, res) => {
 
 exports.signup = async (req, res) => {
     try {
-        const { email, firstName, lastName, password } = req.body;
+        const { email, firstName, lastName, password, contact } = req.body;
 
 
         const checkUser = await User.findOne({ email });
@@ -75,6 +75,7 @@ exports.signup = async (req, res) => {
             email,
             password: hashedPassword,
             image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`, 
+            contact, // Add contract property
         });
 
         await newUser.save();
@@ -113,6 +114,7 @@ exports.login=async (req,res)=>{
 		res.status(200).json({
             success: true,
             message: "Login successful",
+			user: checkUser,
         });
 	}
 	catch(error){

@@ -1,20 +1,23 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { login } from "../../slices/userSlice";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
-  
   const [loginError, setLoginError] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,12 +28,15 @@ const LoginPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({email:formData.email,password:formData.password}),
+        body: JSON.stringify({ email: formData.email, password: formData.password }),
       });
-    
+
       const data = await response.json();
+
       if (data.success) {
+        dispatch(login(data.user));
         alert("Login successful!");
+        navigate("/userhome");
       } else {
         setLoginError(data.message || "Invalid credentials");
       }
@@ -39,7 +45,6 @@ const LoginPage = () => {
       setLoginError("An error occurred during login. Please try again.");
     }
   };
-
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600">
