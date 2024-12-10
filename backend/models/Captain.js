@@ -1,5 +1,5 @@
 const mongoose =require('mongoose')
-const bcrypt=require('jsonwebtoken')
+const bcrypt = require('bcrypt');
 const jwt =require('jsonwebtoken')
 
 const captainSchema =new mongoose.Schema({
@@ -28,7 +28,7 @@ const captainSchema =new mongoose.Schema({
     },
     additionalDetails:{
         type:mongoose.Schema.Types.ObjectId,
-        required:true,
+        required:false,
         ref:"Profile",
     },
     token:{

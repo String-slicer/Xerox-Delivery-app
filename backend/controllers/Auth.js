@@ -1,4 +1,5 @@
 const User =require("../models/User")
+const Captain =require("../models/Captain")
 const OTP = require("../models/OTP");
 
 const otpGenerator= require("otp-generator")
@@ -9,6 +10,7 @@ const bcrypt = require("bcrypt");
 
 
 
+const Store=require("../models/Store")
 
 exports.sendotp = async (req, res) => {
 	try {
@@ -53,7 +55,7 @@ exports.sendotp = async (req, res) => {
 	}
 };
 
-exports.signup = async (req, res) => {
+exports.UserSignup = async (req, res) => {
     try {
         const { email, firstName, lastName, password, contact } = req.body;
 
@@ -65,9 +67,6 @@ exports.signup = async (req, res) => {
                 message: "User is already registered",
             });
         }
-        
-		
-
         const hashedPassword = await User.hashPassword(password);
 
         const newUser = new User({
@@ -91,7 +90,7 @@ exports.signup = async (req, res) => {
     }
 };
 
-exports.login=async (req,res)=>{
+exports.UserLogin=async (req,res)=>{
    
 	try{
 		const {email,password}=req.body;
@@ -108,7 +107,7 @@ exports.login=async (req,res)=>{
 		if (!isPasswordValid) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid credentials. Please try again.",
+                message: "Invalid Password. Please try again.",
             });
         }
 		res.status(200).json({
@@ -122,3 +121,131 @@ exports.login=async (req,res)=>{
         return res.status(500).json({ success: false, error: error.message });
 	}
 };
+
+exports.CaptainSignup=async(req,res)=>{
+
+	try{
+		const {fullName,email, password, contact, vehicle,image}=req.body;
+	
+		const checkCaptain=await Captain.findOne({email});
+		if (checkCaptain) {
+            return res.status(401).json({
+                success: false,
+                message: "Captain is already registered",
+            });
+        }
+		const hashedPassword=await Captain.hashPassword(password);
+		const newCaptain=new Captain({
+            fullName,
+            email,
+            password: hashedPassword,
+            contact,
+			vehicle,
+            image:image,
+		})
+		await newCaptain.save();
+
+        res.status(201).json({
+            success: true,
+            message: "Catain registered successfully",
+        });
+	}
+    catch(error){
+        console.log(error.message);
+        return res.status(500).json({ success: false, error: error.message });
+	}
+
+}
+
+exports.CaptainLogin=async(req,res)=>{
+    
+	const {email,password}=req.body;
+
+	try{
+		const checkCaptain=await Captain.findOne({email});
+		if(!checkCaptain){
+			return res.status(401).json({
+                success: false,
+                message: "Entered email does not exists",
+            });
+		}
+		const isPasswordValid=await Captain.comparePassword(password);
+		if(!isPasswordValid){
+			return res.status(401).json({
+                success: false,
+                message: "Invalid Password. Please try again.",
+            });
+		}
+		res.status(200).json({
+            success: true,
+            message: "Login successful",
+        });
+
+	}
+	catch(error){
+		console.error(error.message);
+        return res.status(500).json({ success: false, error: error.message });
+	}
+
+}
+
+exports.StoreSignup=async(req,res)=>{
+    try{
+		const {StoreName,email, password,contact, address}=req.body;
+	
+		const checkStore=await Store.findOne({email});
+		if (checkStore) {
+            return res.status(401).json({
+                success: false,
+                message: "Store is already registered",
+            });
+        }
+		const hashedPassword=await Store.hashPassword(password);
+		const newStore=new Store({
+            StoreName,
+            email,
+            password: hashedPassword,
+            contact,
+			address,
+		})
+		await newStore.save();
+
+        res.status(201).json({
+            success: true,
+            message: "Store registered successfully",
+        });
+	}
+    catch(error){
+        console.log(error.message);
+        return res.status(500).json({ success: false, error: error.message });
+	}
+}
+exports.StoreLogin=async(req,res)=>{
+	const {email,password}=req.body;
+
+	try{
+		const checkStore=await Store.findOne({email});
+		if(!checkStore){
+			return res.status(401).json({
+                success: false,
+                message: "Entered email does not exists",
+            });
+		}
+		const isPasswordValid=await Store.comparePassword(password);
+		if(!isPasswordValid){
+			return res.status(401).json({
+                success: false,
+                message: "Invalid Password. Please try again.",
+            });
+		}
+		res.status(200).json({
+            success: true,
+            message: "Login successful",
+        });
+
+	}
+	catch(error){
+		console.error(error.message);
+        return res.status(500).json({ success: false, error: error.message });
+	}
+}

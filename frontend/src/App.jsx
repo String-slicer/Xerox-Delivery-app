@@ -1,22 +1,30 @@
 import React from 'react'
 import {Route, Routes} from 'react-router-dom'
 import LandingPage from './Pages/LandingPage'
-import SignupPage from './Pages/UserPages/signup'
-import LoginPage from './Pages/UserPages/loginpage'
 import CaptainHome from './Pages/CaptainPages/CaptainHome'
 import "leaflet/dist/leaflet.css";
 import UserHome from './Pages/UserPages/UserHome'
 import StoreHomePage from './Pages/StorePages/StoreHomePage'
+import CaptainSignupPage from './Pages/CaptainPages/CaptainSignupPage'
+import CaptainLoginPage from './Pages/CaptainPages/CaptainLoginPage'
+import UserSignupPage from './Pages/UserPages/UserSignupPage'
+import UserLoginPage from './Pages/UserPages/UserLoginPage'
+import StoreLoginPage from './Pages/StorePages/StoreLoginPage';
+import StoreSignupPage from './Pages/StorePages/StoreSignupPage';
 function App() {
   return (
     <div>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/userSignup" element={<SignupPage/>} />
-        <Route path="/userLogin" element={<LoginPage/>} />
-        <Route path="/captainhome" element={<CaptainHome/>} />
-        <Route path="/userhome" element={<UserHome/>} />
-        <Route path="/storehome" element={<StoreHomePage/>} />
+        <Route path="/captainHome" element={<CaptainHome/>} />
+        <Route path="/userHome" element={<UserHome/>} />
+        <Route path="/storeHome" element={<StoreHomePage/>} />
+        <Route path="/captainSignup" element={<CaptainSignupPage/>} />
+        <Route path="/captainLogin" element={<CaptainLoginPage/>} />
+        <Route path="/userLogin" element={<UserLoginPage/>} />
+        <Route path="/userSignup" element={<UserSignupPage/>} />
+        <Route path="/storeSignup" element={<StoreSignupPage/>} />
+        <Route path="/storeLogin" element={<StoreLoginPage/>} />
       </Routes>
     </div>
   )

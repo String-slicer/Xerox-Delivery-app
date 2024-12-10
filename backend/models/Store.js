@@ -35,7 +35,7 @@ const storeSchema = new mongoose.Schema({
     },
     image:{
         type:String,
-        required:true,
+        required:false,
     },
     socketId:{
         type:String,
@@ -59,4 +59,13 @@ const storeSchema = new mongoose.Schema({
     },
 },{timestamps:true});
 
-modules.export = mongoose.model("Store",storeSchema);
+storeSchema.methods.comparePassword = async function (password) {
+    return await bcrypt.compare(password, this.password);
+}
+
+
+storeSchema.statics.hashPassword = async function (password) {
+    return await bcrypt.hash(password, 10);
+}
+
+module.exports = mongoose.model("Store",storeSchema);

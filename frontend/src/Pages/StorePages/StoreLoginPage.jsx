@@ -1,17 +1,13 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { login } from "../../slices/userSlice";
 
-const LoginPage = () => {
+const StoreLoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [loginError, setLoginError] = useState("");
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
+  
+  const [loginError, setLoginError] = useState("");
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -19,24 +15,22 @@ const LoginPage = () => {
     });
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:4000/User/login", {
+      const response = await fetch("http://localhost:4000/Captain/captainLogin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: formData.email, password: formData.password }),
+        body: JSON.stringify({email:formData.email,password:formData.password}),
       });
-
+    
       const data = await response.json();
-
       if (data.success) {
-        dispatch(login(data.user));
         alert("Login successful!");
-        navigate("/userhome");
       } else {
         setLoginError(data.message || "Invalid credentials");
       }
@@ -45,6 +39,7 @@ const LoginPage = () => {
       setLoginError("An error occurred during login. Please try again.");
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600">
@@ -112,4 +107,5 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default StoreLoginPage;
+
