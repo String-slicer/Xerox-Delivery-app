@@ -7,6 +7,9 @@ import gsap from "gsap";
 import WaitingToConfirm from "../../components/usercomponents/WaitingToConfirm";
 import { useEffect } from "react";
 import {useGSAP} from "@gsap/react"
+import io from "socket.io-client";
+
+const socket =io.connect("http://localhost:4000")
 function UserHome() {
   const [isFormOpen, setIsFormOpen] = useState(false); // State for form visibility
   const [isWaiting, setIsWaiting] = useState(false); // State for waiting confirmation visibility
@@ -16,6 +19,9 @@ function UserHome() {
     console.log("button clicked");
     setIsFormOpen(!isFormOpen);
     // GSAP animation for toggling form visibility
+    socket.emit("chat",{
+      message:"form opened"
+    })
   
     // setIsFormOpen(!isFormOpen); // Toggle state
   };
