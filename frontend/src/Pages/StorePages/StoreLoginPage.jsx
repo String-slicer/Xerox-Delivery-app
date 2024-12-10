@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const LoginPage = () => {
+const StoreLoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -20,7 +20,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:4000/User/login", {
+      const response = await fetch("http://localhost:4000/Captain/captainLogin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -107,4 +107,5 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default StoreLoginPage;
+

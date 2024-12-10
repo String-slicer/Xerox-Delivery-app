@@ -8,6 +8,8 @@ const cookieParser =require("cookie-parser")
 const cors=require("cors")
 const dotenv=require("dotenv")
 const userRoutes=require("./routes/User")
+const captainRoutes=require("./routes/Captain")
+const storeRoutes=require("./routes/Store")
 const blockchainRoutes=require("./routes/Blockchain")
 dotenv.config()
 
@@ -25,6 +27,8 @@ app.use(
     )
 )
 app.use("/User",userRoutes);
+app.use("/Captain",captainRoutes);
+app.use("/Store",storeRoutes);
 app.use("/Blockchain",blockchainRoutes);
 app.get("/",(req,res)=>{
     return res.json({

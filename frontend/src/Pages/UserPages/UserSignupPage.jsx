@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const SignupPage = () => {
+const UserSignupPage = () => {
   const [formData, setFormData] = useState({
     email: "",
     otp: "",
@@ -12,7 +12,7 @@ const SignupPage = () => {
 
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
-  const [serverOtp, setServerOtp] = useState(""); // Simulated OTP for verification
+  const [serverOtp, setServerOtp] = useState(""); 
 
   const handleChange = (e) => {
     setFormData({
@@ -22,11 +22,6 @@ const SignupPage = () => {
   };
 
   const handleEmailVerify = async () => {
-    // Simulate sending OTP
-    // const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString(); // 4-digit OTP
-    // setServerOtp(generatedOtp);
-    // setOtpSent(true);
-    // alert(`OTP sent to ${formData.email}: ${generatedOtp}`); // In production, you'd send this via email.
     console.log(formData.email);
     if (!formData.email) {
       alert("Please enter your email.");
@@ -34,7 +29,7 @@ const SignupPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:4000/User/sendOtp", {
+      const response = await fetch("http://localhost:4000/User/sendotp", {
         method: "POST", // HTTP method
         headers: {
           "Content-Type": "application/json", // Indicating the content type as JSON
@@ -71,7 +66,7 @@ const SignupPage = () => {
       return;
     }
     console.log("Signup Data Submitted:", formData);
-    const response = await fetch("http://localhost:4000/User/signup", {
+    const response = await fetch("http://localhost:4000/User/userSignup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -88,13 +83,12 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600">
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           Sign Up
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email */}
           <div>
             <label
               htmlFor="email"
@@ -129,7 +123,6 @@ const SignupPage = () => {
             </div>
           </div>
 
-          {/* OTP */}
           {otpSent && !otpVerified && (
             <div>
               <label
@@ -159,11 +152,7 @@ const SignupPage = () => {
               </div>
             </div>
           )}
-
-          {/* Rest of the form */}
-          {otpVerified && (
             <>
-              {/* First Name */}
               <div>
                 <label
                   htmlFor="firstName"
@@ -183,7 +172,6 @@ const SignupPage = () => {
                 />
               </div>
 
-              {/* Last Name */}
               <div>
                 <label
                   htmlFor="lastName"
@@ -203,7 +191,6 @@ const SignupPage = () => {
                 />
               </div>
 
-              {/* Password */}
               <div>
                 <label
                   htmlFor="password"
@@ -223,7 +210,6 @@ const SignupPage = () => {
                 />
               </div>
 
-              {/* Re-enter Password */}
               <div>
                 <label
                   htmlFor="rePassword"
@@ -243,7 +229,6 @@ const SignupPage = () => {
                 />
               </div>
 
-              {/* Register Button */}
               <button
                 type="submit"
                 className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -251,11 +236,10 @@ const SignupPage = () => {
                 Register
               </button>
             </>
-          )}
         </form>
       </div>
     </div>
   );
 };
 
-export default SignupPage;
+export default UserSignupPage;
