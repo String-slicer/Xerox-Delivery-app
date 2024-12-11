@@ -23,7 +23,7 @@ const UserLoginPage = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:4000/User/login", {
+      const response = await fetch("http://localhost:4000/User/userLogin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,7 +32,7 @@ const UserLoginPage = () => {
       });
 
       const data = await response.json();
-
+    
       if (data.success) {
         dispatch(login(data.user));
         alert("Login successful!");

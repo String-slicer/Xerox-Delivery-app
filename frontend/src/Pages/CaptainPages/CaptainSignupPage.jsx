@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 
 const CaptainSignupPage = () => {
+  const navigate=useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     otp: "",
@@ -9,7 +11,6 @@ const CaptainSignupPage = () => {
     password: "",
     rePassword: "",
     contact: "",
-    image: "",
     vehicleColor: "",
     vehiclePlate: "",
   });
@@ -77,7 +78,6 @@ const CaptainSignupPage = () => {
       email: formData.email,
       password: formData.password,
       contact: formData.contact,
-      image: formData.image,
       vehicle: {
         color: formData.vehicleColor,
         plate: formData.vehiclePlate,
@@ -92,8 +92,10 @@ const CaptainSignupPage = () => {
       });
 
       const data = await response.json();
+      console.log(data);
       if (data.success) {
         alert("Captain registered successfully!");
+        navigate("/captainlogin");
       } else {
         alert(data.message);
       }
@@ -174,10 +176,6 @@ const CaptainSignupPage = () => {
                 <input type="text" id="vehiclePlate" name="vehiclePlate" value={formData.vehiclePlate} onChange={handleChange} required className="mt-1 p-2 w-full border rounded-lg" />
               </div>
 
-              <div>
-                <label htmlFor="image" className="block text-sm font-medium text-gray-700">Image URL</label>
-                <input type="text" id="image" name="image" value={formData.image} onChange={handleChange} required className="mt-1 p-2 w-full border rounded-lg" />
-              </div>
 
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>

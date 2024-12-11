@@ -10,7 +10,7 @@ const orderSchema = new mongoose.Schema(
     storeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Store",
-      required: true,
+      default: null, // Assigned later
     },
     deliveryPartnerId: {
       type: mongoose.Schema.Types.ObjectId,

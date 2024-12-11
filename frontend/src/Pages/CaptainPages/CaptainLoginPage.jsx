@@ -1,20 +1,22 @@
 import React, { useState } from "react";
-
+import { useDispatch } from "react-redux";
+import { captainlogin } from "../../slices/captainSlice";
+import {useNavigate} from "react-router-dom";
 const CaptainLoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
-  
+  const navigate=useNavigate();
   const [loginError, setLoginError] = useState("");
+  const dispatch = useDispatch(); // Initialize dispatch
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,10 +29,13 @@ const CaptainLoginPage = () => {
         },
         body: JSON.stringify({email:formData.email,password:formData.password}),
       });
-    
+      
       const data = await response.json();
+      console.log(data)
       if (data.success) {
+        dispatch(captainlogin(data.captain)); // Dispatch captainlogin action
         alert("Login successful!");
+        navigate("/captainhome");
       } else {
         setLoginError(data.message || "Invalid credentials");
       }
@@ -39,7 +44,6 @@ const CaptainLoginPage = () => {
       setLoginError("An error occurred during login. Please try again.");
     }
   };
-
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600">
@@ -93,6 +97,12 @@ const CaptainLoginPage = () => {
             Login
           </button>
         </form>
+
+        {loginError && (
+          <div className="text-red-500 text-center mt-4">
+            {loginError}
+          </div>
+        )}
 
         <div className="text-center mt-4">
           <button

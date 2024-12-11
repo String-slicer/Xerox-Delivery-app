@@ -125,7 +125,7 @@ exports.UserLogin=async (req,res)=>{
 exports.CaptainSignup=async(req,res)=>{
 
 	try{
-		const {fullName,email, password, contact, vehicle,image}=req.body;
+		const {fullName,email, password, contact, vehicle}=req.body;
 	
 		const checkCaptain=await Captain.findOne({email});
 		if (checkCaptain) {
@@ -141,7 +141,7 @@ exports.CaptainSignup=async(req,res)=>{
             password: hashedPassword,
             contact,
 			vehicle,
-            image:image,
+            image:`https://api.dicebear.com/5.x/initials/svg?seed=${fullName.firstName} ${fullName.lastName}`,
 		})
 		await newCaptain.save();
 
@@ -169,16 +169,20 @@ exports.CaptainLogin=async(req,res)=>{
                 message: "Entered email does not exists",
             });
 		}
-		const isPasswordValid=await Captain.comparePassword(password);
+		
+		const isPasswordValid=await checkCaptain.comparePassword(password);
+
 		if(!isPasswordValid){
 			return res.status(401).json({
                 success: false,
                 message: "Invalid Password. Please try again.",
+			
             });
 		}
 		res.status(200).json({
             success: true,
             message: "Login successful",
+			captain: checkCaptain,
         });
 
 	}
@@ -207,6 +211,7 @@ exports.StoreSignup=async(req,res)=>{
             password: hashedPassword,
             contact,
 			address,
+			image:`https://api.dicebear.com/5.x/initials/svg?seed=${StoreName}`,
 		})
 		await newStore.save();
 
@@ -231,7 +236,7 @@ exports.StoreLogin=async(req,res)=>{
                 message: "Entered email does not exists",
             });
 		}
-		const isPasswordValid=await Store.comparePassword(password);
+		const isPasswordValid=await checkStore.comparePassword(password);
 		if(!isPasswordValid){
 			return res.status(401).json({
                 success: false,
@@ -241,6 +246,7 @@ exports.StoreLogin=async(req,res)=>{
 		res.status(200).json({
             success: true,
             message: "Login successful",
+			store:checkStore
         });
 
 	}

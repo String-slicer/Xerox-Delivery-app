@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 
 const StoreSignupPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     StoreName: "",
     email: "",
@@ -8,7 +10,7 @@ const StoreSignupPage = () => {
     password: "",
     rePassword: "",
     address: "",
-    image: "",
+
   });
 
   const [otpSent, setOtpSent] = useState(false);
@@ -79,6 +81,7 @@ const StoreSignupPage = () => {
       const data = await response.json();
       if (data.success) {
         alert("Store registered successfully!");
+        navigate("/storelogin");
       } else {
         alert(data.message);
       }
