@@ -59,6 +59,10 @@ const storeSchema = new mongoose.Schema({
     },
 },{timestamps:true});
 
+storeSchema.methods.generateAuthToken = function () {
+    const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    return token;
+}
 storeSchema.methods.comparePassword = async function (password) {
     return await bcrypt.compare(password, this.password);
 }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../slices/userSlice";
+import toaster, { Toaster } from "react-hot-toast";
 
 const UserLoginPage = () => {
   const [formData, setFormData] = useState({
@@ -35,10 +36,13 @@ const UserLoginPage = () => {
     
       if (data.success) {
         dispatch(login(data.user));
+        localStorage.setItem("token", data.token);
         alert("Login successful!");
+        
         navigate("/userhome");
       } else {
-        setLoginError(data.message || "Invalid credentials");
+        // setLoginError(data.message || "Invalid credentials");
+        toaster.error(data.message || "Invalid credentials");
       }
     } catch (error) {
       console.error("Error during login:", error.message);

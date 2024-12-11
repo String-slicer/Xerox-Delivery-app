@@ -34,6 +34,7 @@ const StoreLoginPage = () => {
       console.log(data)
       if (data.success) {
         dispatch(storelogin(data.store)); // Dispatch storelogin action
+        localStorage.setItem('token', data.token)
         alert("Login successful!");
         navigate("/storehome");
         

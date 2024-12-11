@@ -11,21 +11,28 @@ import UserSignupPage from './Pages/UserPages/UserSignupPage'
 import UserLoginPage from './Pages/UserPages/UserLoginPage'
 import StoreLoginPage from './Pages/StorePages/StoreLoginPage';
 import StoreSignupPage from './Pages/StorePages/StoreSignupPage';
+import { Toaster} from 'react-hot-toast';
+import NewOrders from './Pages/StorePages/NewOrders'
+import TrackOrders from './Pages/StorePages/TrackOrders';
 function App() {
   return (
     <div>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/captainHome" element={<CaptainHome/>} />
-        <Route path="/userHome" element={<UserHome/>} />
-        <Route path="/storeHome" element={<StoreHomePage/>} />
-        <Route path="/captainSignup" element={<CaptainSignupPage/>} />
-        <Route path="/captainLogin" element={<CaptainLoginPage/>} />
-        <Route path="/userLogin" element={<UserLoginPage/>} />
-        <Route path="/userSignup" element={<UserSignupPage/>} />
-        <Route path="/storeSignup" element={<StoreSignupPage/>} />
-        <Route path="/storeLogin" element={<StoreLoginPage/>} />
-      </Routes>
+        <Toaster/>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/captainHome" element={<CaptainHome/>} />
+            <Route path="/userHome" element={<UserHome/>} />
+            <Route path="/storeHome" element={<StoreHomePage/>} />
+            <Route path="/captainSignup" element={<CaptainSignupPage/>} />
+            <Route path="/captainLogin" element={<CaptainLoginPage/>} />
+            <Route path="/userLogin" element={<UserLoginPage/>} />
+            <Route path="/userSignup" element={<UserSignupPage/>} />
+            <Route path="/storeSignup" element={<StoreSignupPage/>} />
+            <Route path="/storeLogin" element={<StoreLoginPage/>} />
+            <Route path="/new-orders" element={<NewOrders />} />
+           <Route path="/track-orders" element={<TrackOrders />} />
+          </Routes>
+        
     </div>
   )
 }

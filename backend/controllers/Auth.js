@@ -110,10 +110,12 @@ exports.UserLogin=async (req,res)=>{
                 message: "Invalid Password. Please try again.",
             });
         }
+		const token=await checkUser.generateAuthToken();
 		res.status(200).json({
             success: true,
             message: "Login successful",
 			user: checkUser,
+			token,
         });
 	}
 	catch(error){
@@ -179,10 +181,12 @@ exports.CaptainLogin=async(req,res)=>{
 			
             });
 		}
+		const token=await checkCaptain.generateAuthToken();
 		res.status(200).json({
             success: true,
             message: "Login successful",
 			captain: checkCaptain,
+			token,
         });
 
 	}
@@ -243,10 +247,12 @@ exports.StoreLogin=async(req,res)=>{
                 message: "Invalid Password. Please try again.",
             });
 		}
+		const token=await checkStore.generateAuthToken();
 		res.status(200).json({
             success: true,
             message: "Login successful",
-			store:checkStore
+			store:checkStore,
+			token,
         });
 
 	}

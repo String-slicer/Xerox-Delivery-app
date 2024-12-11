@@ -5,7 +5,8 @@ import OrderButton from "../../components/usercomponents/OrderButton";
 import OrderForm from "../../components/usercomponents/OrderForm";
 import gsap from "gsap";
 import WaitingToConfirm from "../../components/usercomponents/WaitingToConfirm";
-import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
+
 import {useGSAP} from "@gsap/react"
 import io from "socket.io-client";
 
@@ -45,6 +46,7 @@ function UserHome() {
 
   return (
     <div className="relative">
+   {/* Add this line */}
       {/* Navbar */}
       <Navbar />
 

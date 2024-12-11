@@ -34,6 +34,7 @@ const CaptainLoginPage = () => {
       console.log(data)
       if (data.success) {
         dispatch(captainlogin(data.captain)); // Dispatch captainlogin action
+        localStorage.setItem('token', data.token)
         alert("Login successful!");
         navigate("/captainhome");
       } else {
