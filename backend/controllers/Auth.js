@@ -5,6 +5,8 @@ const OTP = require("../models/OTP");
 const otpGenerator= require("otp-generator")
 const mailSender=require("../utils/mailSender")
 const bcrypt = require("bcrypt");
+const {addStore} =require('./BlockChain')
+
 
 
 
@@ -219,6 +221,9 @@ exports.StoreSignup=async(req,res)=>{
 		})
 		await newStore.save();
 
+        // Add storeId to blockchain
+        await addStore({ body: { storeId: newStore._id.toString() } }, res);
+		
         res.status(201).json({
             success: true,
             message: "Store registered successfully",

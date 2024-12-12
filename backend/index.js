@@ -10,7 +10,8 @@ const userRoutes=require("./routes/User")
 const captainRoutes=require("./routes/Captain")
 const storeRoutes=require("./routes/Store")
 const blockchainRoutes=require("./routes/Blockchain")
-const { Server } = require('socket.io');
+const {initializeSocket}=require("./socket")
+const orderRoutes=require('./routes/Orders')
 dotenv.config()
 
 const PORT=process.env.PORT||4000;
@@ -30,6 +31,7 @@ app.use("/User",userRoutes);
 app.use("/Captain",captainRoutes);
 app.use("/Store",storeRoutes);
 app.use("/Blockchain",blockchainRoutes);
+app.use("/order",orderRoutes)
 app.get("/",(req,res)=>{
     return res.json({
         success:true,
@@ -38,20 +40,7 @@ app.get("/",(req,res)=>{
 })
 
 const server=http.createServer(app)
-const io = new Server(server,{
-    cors: {
-      origin: "*",
-    }
-  });
-
-io.on('connection', (socket) => {
-    console.log('a user connected',socket.id);
-
-    socket.on("chat",(payload)=>{
-        console.log(payload);
-        io.emit("chat",payload)
-    })
-  });
+initializeSocket(server)
 
 server.listen(PORT, () => {
 	console.log(`App is running at ${PORT}`)
