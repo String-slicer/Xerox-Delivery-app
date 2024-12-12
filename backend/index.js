@@ -11,7 +11,7 @@ const captainRoutes=require("./routes/Captain")
 const storeRoutes=require("./routes/Store")
 const blockchainRoutes=require("./routes/Blockchain")
 const {initializeSocket}=require("./socket")
-const orderRoutes=require('./routes/Orders')
+// const orderRoutes=require('./routes/Orders')
 dotenv.config()
 
 const PORT=process.env.PORT||4000;
@@ -31,7 +31,7 @@ app.use("/User",userRoutes);
 app.use("/Captain",captainRoutes);
 app.use("/Store",storeRoutes);
 app.use("/Blockchain",blockchainRoutes);
-app.use("/order",orderRoutes)
+// app.use("/order",orderRoutes)
 app.get("/",(req,res)=>{
     return res.json({
         success:true,
