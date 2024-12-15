@@ -1,15 +1,12 @@
 const User =require("../models/User")
 const Captain =require("../models/Captain")
 const OTP = require("../models/OTP");
+const Order=require("../models/Orders")
 
 const otpGenerator= require("otp-generator")
 const mailSender=require("../utils/mailSender")
 const bcrypt = require("bcrypt");
 const {addStore} =require('./BlockChain')
-
-
-
-
 
 
 const Store=require("../models/Store")
@@ -162,7 +159,7 @@ exports.CaptainSignup=async(req,res)=>{
 }
 
 exports.CaptainLogin=async(req,res)=>{
-    
+    console.log("hi");
 	const {email,password}=req.body;
 
 	try{
@@ -266,3 +263,51 @@ exports.StoreLogin=async(req,res)=>{
         return res.status(500).json({ success: false, error: error.message });
 	}
 }
+
+exports.createOrder = async (req, res) => {
+	try {
+		const { documents, userId} = req.body;
+		console.log(userId);
+		console.log(documents);
+  
+	  if (!userId || !documents) {
+		return res.status(400).json({ error: "User ID and documents are required" });
+	  }
+  
+	  const newOrder = new Order({
+		userId,
+		documents,
+		totalAmount: calculateTotalAmount(documents),
+		status: 'Pending',
+		// deliveryAddress: deliveryAddress,
+		// deliverylocation: deliverylocation,
+	  });
+  
+	  const savedOrder = await newOrder.save();
+  
+	  res.status(201).json(savedOrder);
+	} catch (error) {
+	  console.error('Error creating order:', error);
+	  res.status(500).json({ error: 'Error creating order' });
+	}
+  };
+  
+  const calculateTotalAmount = (documents) => {
+	let totalAmount = 0;
+	documents.forEach((doc) => {
+	  const docCost = calculateDocumentCost(doc);
+	  totalAmount += docCost * doc.copies;
+	});
+	return totalAmount;
+  };
+  
+  const calculateDocumentCost = (doc) => {
+	let baseCost = 5; 
+  
+	if (doc.folderType !== "None") baseCost += 2;
+	if (doc.binding !== "None") baseCost += 3;
+	if (doc.lamination !== "None") baseCost += 4; 
+	if (doc.paperQuality === "Premium"||doc.paperQuality==="Standard") baseCost += 5; 
+  
+	return baseCost;
+  };

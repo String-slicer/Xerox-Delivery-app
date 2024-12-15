@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
+import {useSelector} from "react-redux";
 
 function OrderForm({ onClose, onSubmit }) {
   const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ function OrderForm({ onClose, onSubmit }) {
       {
         name: '',
         file: null,
+        fileHash:'',
         folderType: 'None',
         folderColor: 'Black',
         copies: 1,
@@ -21,39 +23,65 @@ function OrderForm({ onClose, onSubmit }) {
   });
 
   const handleDocumentChange = (index, e) => {
-    const { name, value, files } = e.target;
-    const newDocuments = [...formData.documents];
-    if (name === 'file') {
-      newDocuments[index][name] = files[0];
-    } else {
-      newDocuments[index][name] = value;
-    }
-    setFormData({ ...formData, documents: newDocuments });
+    const { name, value, type, files } = e.target;
+    const updatedDocuments = [...formData.documents];
+    updatedDocuments[index] = {
+      ...updatedDocuments[index],
+      [name]: type === 'file' ? files[0] : value,
+    };
+    setFormData({ documents: updatedDocuments });
   };
-
+  
+  const userId = useSelector((state) => state.user.user?._id);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Store document in IPFS
-      // const formDataToSend = new FormData();
-      // formData.documents.forEach((doc, index) => {
-      //   formDataToSend.append(`file${index}`, doc.file);
-      // });
-      // const ipfsResponse = await axios.post('https://ipfs-api-url.com/upload', formDataToSend);
-      // const cid = ipfsResponse.data.cid;
-
-      // // Store CID and order details in backend
-      // const orderDetails = {
-      //   documents: formData.documents.map(doc => ({ ...doc, cid })),
-      // };
-      // await axios.post('https://backend-api-url.com/orders', orderDetails);
-
-      // Call onSubmit to display waiting confirmation UI
+      const formDataToSend = [];
+      await Promise.all(
+        formData.documents.map(async (doc, index) => {
+          const documentData = { ...doc };
+          if (doc.file) {
+            const fileData = new FormData();
+            fileData.append('file', doc.file);
+  
+            const fileSend = await axios({
+              method: 'post',
+              url: 'https://api.pinata.cloud/pinning/pinFileToIPFS',
+              data: fileData,
+              headers: {
+                pinata_api_key: import.meta.env.VITE_PINATA_API_KEY,
+                pinata_secret_api_key: import.meta.env.VITE_PINATA_SECRET_KEY,
+                'Content-Type': 'multipart/form-data',
+              },
+            });
+  
+            documentData.fileHash = fileSend.data.IpfsHash;
+            delete documentData.file; 
+          }
+          formDataToSend.push(documentData);
+        })
+      );
+  
+      const response = await fetch("http://localhost:4000/Order/createOrder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          documents: formDataToSend,
+        }),
+      });
+  
+      const result = await response.json();
+      console.log(result);
       onSubmit();
     } catch (error) {
-      console.error('Error submitting order:', error);
+      console.error("Error submitting order:", error);
     }
   };
+  
+
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-black text-white rounded-lg shadow-md relative mt-12">
@@ -216,3 +244,4 @@ function OrderForm({ onClose, onSubmit }) {
 }
 
 export default OrderForm;
+

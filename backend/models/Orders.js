@@ -20,7 +20,7 @@ const orderSchema = new mongoose.Schema(
     documents: [
       {
         name: { type: String, required: true }, // Document name
-        file: { 
+        fileHash: { 
           type: String, 
           required: true 
         }, // File URL or path
@@ -82,7 +82,7 @@ const orderSchema = new mongoose.Schema(
     ],
     totalAmount: {
       type: Number,
-      required: true,
+      required: false,
     },
     status: {
       type: String,
@@ -91,7 +91,7 @@ const orderSchema = new mongoose.Schema(
     },
     deliveryAddress: {
       type: String,
-      required: true,
+      required: false,
     },
     deliverylocation: {
       ltd: {

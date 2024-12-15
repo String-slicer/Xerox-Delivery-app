@@ -38,7 +38,6 @@ const UserLoginPage = () => {
         dispatch(login(data.user));
         localStorage.setItem("token", data.token);
         alert("Login successful!");
-        
         navigate("/userhome");
       } else {
         // setLoginError(data.message || "Invalid credentials");
