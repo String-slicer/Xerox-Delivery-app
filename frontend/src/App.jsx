@@ -12,7 +12,7 @@ import UserLoginPage from './Pages/UserPages/UserLoginPage'
 import StoreLoginPage from './Pages/StorePages/StoreLoginPage';
 import StoreSignupPage from './Pages/StorePages/StoreSignupPage';
 import { Toaster} from 'react-hot-toast';
-import NewOrders from './Pages/StorePages/NewOrders'
+import NewOrders from './Pages/StorePages/newOrders'
 import TrackOrders from './Pages/StorePages/TrackOrders';
 function App() {
   return (

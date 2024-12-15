@@ -1,6 +1,6 @@
 // TrackOrders.jsx
 import React, { useState } from "react";
-import Navbar from "../../components/storecomponents/Navbar";
+
 const TrackOrders = () => {
   // Sample order data (can be fetched from a database or API)
   const orders = [
@@ -11,7 +11,7 @@ const TrackOrders = () => {
 
   return (
     <div className="max-w-7xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-lg">
-        {/* <Navbar /> */}
+   
       <h2 className="text-3xl font-semibold mb-6">Track Orders</h2>
 
       <div className="space-y-6">

@@ -14,9 +14,12 @@ export const captainSlice = createSlice({
         captainlogout: (state) => {
             state.captain = null;
         },
+        updateSocket:(state,action)=>{
+            state.captain.socketId=action.payload;
+        }
     },
 });
 
-export const { captainlogin, captainlogout } = captainSlice.actions;
+export const { captainlogin, captainlogout,updateSocket } = captainSlice.actions;
 
 export default captainSlice.reducer;

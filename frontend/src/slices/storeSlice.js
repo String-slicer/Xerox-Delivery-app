@@ -1,11 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    store: {
-        name: '',
-        address: '',
-        email: ''
-    },
+    store:null
 };
 
 export const storeSlice = createSlice({
@@ -16,15 +12,14 @@ export const storeSlice = createSlice({
             state.store = action.payload;
         },
         storelogout: (state) => {
-            state.store = {
-                name: '',
-                address: '',
-                email: ''
-            };
+            state.store = null
         },
+        updateSocket:(state,action)=>{
+            state.store.socketId=action.payload;
+        }
     },
 });
 
-export const { storelogin, storelogout } = storeSlice.actions;
+export const { storelogin, storelogout, updateSocket } = storeSlice.actions;
 
 export default storeSlice.reducer;

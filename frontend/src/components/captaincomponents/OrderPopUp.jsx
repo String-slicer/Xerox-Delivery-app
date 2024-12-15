@@ -40,14 +40,15 @@ const OrderPopUp = (props) => {
                 </div>
                 <div className='mt-5 w-full '>
                     <button onClick={() => {
-                        props.setConfirmOrderPopupPanel(true)
-                        props.confirmOrder()
+                        props.setOrderPopupPanel(false)
+                    
+                        props.confirmOrder();
                     }} className='bg-green-600 w-full text-white font-semibold p-2 px-10 rounded-lg'>
                         Accept
                     </button>
 
                     <button onClick={() => {
-                        props.setOrderPopupPanel(false)
+                        props.setOrderPopupPanel(false);
                     }} className='mt-2 w-full bg-gray-300 text-gray-700 font-semibold p-2 px-10 rounded-lg'>
                         Ignore
                     </button>

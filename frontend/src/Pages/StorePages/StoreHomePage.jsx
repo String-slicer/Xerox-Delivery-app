@@ -1,12 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState ,useContext, useEffect} from 'react';
 import Navbar from '../../components/storecomponents/Navbar';
 import { useSelector } from 'react-redux';
 import { NewOrders } from './newOrders';
 import { TrackOrders } from './TrackOrders';
+import { SocketContext } from '../../context/socketcontext';
 
+// import {useSelector} from 'react-redux';
 function StoreHomePage() {
-  const storeDetails = useSelector((state) => state.store.store);
+  
   const [activePage, setActivePage] = useState('dashboard');
+  const { socket } = useContext(SocketContext);
+  const store=useSelector((state)=>state.store.store);
+  useEffect(() => {
+    socket.emit('join', {
+        userId: store._id,
+        userType: 'store'
+    })
+    const updateLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+
+                socket.emit('update-location-store', {
+                    userId: store._id,
+                    location: {
+                        ltd: position.coords.latitude,
+                        lng: position.coords.longitude
+                    }
+                })
+            })
+        }
+    }
+
+    const locationInterval = setInterval(updateLocation, 10000)
+    updateLocation()
+  }, [])
 
   const renderContent = () => {
     switch (activePage) {
