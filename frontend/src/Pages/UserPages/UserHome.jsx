@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef,useContext, useEffect } from "react";
 import Navbar from "../../components/usercomponents/Navbar";
 import Map from "../../components/usercomponents/Map";
 import OrderButton from "../../components/usercomponents/OrderButton";
@@ -6,26 +6,28 @@ import OrderForm from "../../components/usercomponents/OrderForm";
 import gsap from "gsap";
 import WaitingToConfirm from "../../components/usercomponents/WaitingToConfirm";
 import { Toaster } from "react-hot-toast";
-
+import AcceptedStatus from "../../components/usercomponents/AcceptedStatus";
 import {useGSAP} from "@gsap/react"
-import io from "socket.io-client";
+import { SocketContext } from "../../context/socketcontext";
 
-const socket =io.connect("http://localhost:4000")
 function UserHome() {
   const [isFormOpen, setIsFormOpen] = useState(false); // State for form visibility
   const [isWaiting, setIsWaiting] = useState(false); // State for waiting confirmation visibility
   const form = useRef(null); // Ref for the form element
-
+  const { socket } = useContext(SocketContext);
+  const [Accepted,setAccepted]=useState(false);
   const buttonHandler = () => {
     console.log("button clicked");
     setIsFormOpen(!isFormOpen);
-    // GSAP animation for toggling form visibility
-    socket.emit("chat",{
-      message:"form opened"
-    })
-  
-    // setIsFormOpen(!isFormOpen); // Toggle state
   };
+  useEffect(()=>{
+    socket.on("orderStatusUpdate",(data)=>{
+      console.log(data);
+      if(data.status==="Accepted"){
+        setAccepted(true);
+      }
+    },[socket])
+  })
   useGSAP(()=>{
     if (!isFormOpen) {
       gsap.to(form.current, { display: "none", opacity: 0, duration: 0.5 });
@@ -46,7 +48,7 @@ function UserHome() {
 
   return (
     <div className="relative">
-   {/* Add this line */}
+   
       {/* Navbar */}
       <Navbar />
 
@@ -76,6 +78,13 @@ function UserHome() {
           <WaitingToConfirm />
         </div>
       )}
+      { Accepted && (
+
+      <div className="fixed z-[10000] bottom-0 w-full h-[50%] bg-black text-white flex justify-center items-center">
+        <AcceptedStatus></AcceptedStatus>
+      </div>
+      )
+      }
     </div>
   );
 }

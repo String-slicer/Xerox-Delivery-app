@@ -1,7 +1,7 @@
 import React, { useState ,useContext, useEffect} from 'react';
 import Navbar from '../../components/storecomponents/Navbar';
 import { useSelector } from 'react-redux';
-import { NewOrders } from './newOrders';
+import { NewOrders } from './NewOrders';
 import { TrackOrders } from './TrackOrders';
 import { SocketContext } from '../../context/socketcontext';
 

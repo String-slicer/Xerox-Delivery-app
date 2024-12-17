@@ -14,9 +14,13 @@ export const userSlice = createSlice({
         logout: (state) => {
             state.user = null;
         },
+        updateSocket:(state,action)=>{
+            state.user.socketId=action.payload;
+        }
+        
     },
 });
 
-export const { login, logout } = userSlice.actions;
+export const { login, logout ,updateSocket} = userSlice.actions;
 
 export default userSlice.reducer;

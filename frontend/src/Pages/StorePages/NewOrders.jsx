@@ -6,30 +6,38 @@ import { useSelector } from "react-redux";
 
 const NewOrders = () => {
   const [orders, setOrders] = useState([
-    { id: "675e58a10c327c69dad03b20", customerName: "John Doe", documentType: "Invoice", status: "Pending" },
-    { id: 2, customerName: "Jane Smith", documentType: "Contract", status: "Pending" },
+    { _id: "675e58a10c327c69dad03b20", customerName: "John Doe", documentType: "Invoice", status: "Pending" },
+    { _id: 2, customerName: "Jane Smith", documentType: "Contract", status: "Pending" },
   ]);
   const {socket} = useContext(SocketContext);
-  const [loadingOrderId, setLoadingOrderId] = useState(null);
+  const [loadingOrderId, setLoadingOrderId] = useState(false);
   const [allocatedOrders, setAllocatedOrders] = useState([]);
   const store = useSelector((state) => state.store.store);
 
   useEffect(() => {
     // Listen for new orders from Socket.IO
-    socket.on("newOrder", (newOrder) => {
+    const handleNewOrder = (newOrder) => {
+      console.log(newOrder);
       setOrders((prevOrders) => [...prevOrders, newOrder]);
-    });
-    
-    socket.on("orderStatusUpdate", (data) => {
+    };
+  
+    const handleOrderStatusUpdate = (data) => {
       setLoadingOrderId(null);
+      console.log("orderStatusUpdate", data);
       setAllocatedOrders((prevAllocatedOrders) => [...prevAllocatedOrders, data.orderId]);
       alert(`Captain accepted for order ${data.orderId}`);
-    });
-
-    // return () => {
-    //   socket.disconnect();
-    // };
+    };
+  
+    socket.on("newOrder", handleNewOrder);
+    socket.on("orderStatusUpdate", handleOrderStatusUpdate);
+  
+    // Cleanup function to avoid duplicate listeners
+    return () => {
+      socket.off("newOrder", handleNewOrder);
+      socket.off("orderStatusUpdate", handleOrderStatusUpdate);
+    };
   }, [socket]);
+  
 
   const handleAcceptOrder = async (orderId) => {
     try {
@@ -50,7 +58,7 @@ const NewOrders = () => {
 
   const handleCancelOrder = (orderId) => {
     try {
-      setOrders((prevOrders) => prevOrders.filter((order) => order.id !== orderId));
+      setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
       alert(`Order ${orderId} Cancelled.`);
     } catch (error) {
       console.error("Error canceling order:", error);
@@ -60,6 +68,7 @@ const NewOrders = () => {
 
   const handleSearchCaptain = (orderId) => {
     setLoadingOrderId(orderId);
+    console.log(store._id);
     socket.emit("find-captain", { orderId, range: 2,userId:store._id });
     console.log("searching for captain with id"+orderId)
   };
@@ -69,32 +78,32 @@ const NewOrders = () => {
       <h2 className="text-3xl font-semibold mb-6">New Orders</h2>
 
       <div className="space-y-6">
-        {orders.map((order) => (
-          <div key={order.id} className="bg-gray-100 p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-medium">Order ID: {order.id}</h3>
+        {orders.map((order,index) => (
+          <div key={index} className="bg-gray-100 p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-medium">Order ID: {order._id}</h3>
             <p className="text-lg text-gray-600">Customer: {order.customerName}</p>
             <p className="text-lg text-gray-600">Document Type: {order.documentType}</p>
             <p className="text-lg text-gray-600">Status: {order.status}</p>
 
             <div className="mt-4 flex space-x-4">
               <button
-                onClick={() => handleAcceptOrder(order.id)}
+                onClick={() => handleAcceptOrder(order._id)}
                 className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500"
               >
                 Accept Order
               </button>
               <button
-                onClick={() => handleCancelOrder(order.id)}
+                onClick={() => handleCancelOrder(order._id)}
                 className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500"
               >
                 Cancel Order
               </button>
               <button
-                onClick={() => handleSearchCaptain(order.id)}
+                onClick={() => handleSearchCaptain(order._id)}
                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500"
                 disabled={loadingOrderId === order.id || allocatedOrders.includes(order.id)}
               >
-                {allocatedOrders.includes(order.id) ? "Captain Allocated" : (loadingOrderId === order.id ? "Searching..." : "Search for Captain")}
+                {allocatedOrders.includes(order._id) ? "Captain Allocated" : (loadingOrderId === order._id ? "Searching..." : "Search for Captain")}
               </button>
             </div>
           </div>

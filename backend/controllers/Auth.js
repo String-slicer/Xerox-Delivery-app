@@ -7,7 +7,7 @@ const otpGenerator= require("otp-generator")
 const mailSender=require("../utils/mailSender")
 const bcrypt = require("bcrypt");
 const {addStore} =require('./BlockChain')
-
+const { sendNewOrderToStores } = require('../socket');
 
 const Store=require("../models/Store")
 
@@ -284,7 +284,10 @@ exports.createOrder = async (req, res) => {
 	  });
   
 	  const savedOrder = await newOrder.save();
-  
+	  
+	  // Send new order to all stores
+      await sendNewOrderToStores(savedOrder);
+
 	  res.status(201).json(savedOrder);
 	} catch (error) {
 	  console.error('Error creating order:', error);

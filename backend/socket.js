@@ -73,8 +73,9 @@ function initializeSocket(server) {
                 return socket.emit('error', { message: 'Store location not found' });
             }
 
+
             const { ltd, lng } = store.location;
-            orderModel.findByIdAndUpdate(orderId, { status: 'Pending' , storeId: store._id});
+          const order= await orderModel.findByIdAndUpdate(orderId, { status: 'Pending' , storeId:payload.userId},{new:true});
 
             // Find captains within the specified range
             // const captains = await captainModel.find({
@@ -122,14 +123,24 @@ function initializeSocket(server) {
             order.deliveryPartnerId = captainId;
             order.status = 'Accepted';
             await order.save();
+            console.log(order)
         
             // Notify the captain and store about the acceptance
             socket.emit('orderAccepted', { orderId });
+            console.log("hello")
             if (order.storeId) {
+                console.log("store id"+order.storeId)
                 const store = await storeModel.findById(order.storeId);
                 if (store && store.socketId) {
+                    console.log("store id"+store.socketId)
                     io.to(store.socketId).emit('orderStatusUpdate', { orderId, status: 'Accepted' });
                 }
+
+            }
+            // notify user about the order status
+            const user=await userModel.findById(order.userId);
+            if(user && user.socketId){
+                io.to(user.socketId).emit('orderStatusUpdate',{orderId,status:'Accepted'});
             }
         });
 
@@ -148,4 +159,17 @@ const sendMessageToSocketId = (socketId, messageObject) => {
     }
 }
 
-module.exports = { initializeSocket, sendMessageToSocketId };
+const sendNewOrderToStores = async (order) => {
+    const stores = await storeModel.find({});
+    stores.forEach(store => {
+        if (store.socketId) {
+            console.log(stores)
+            sendMessageToSocketId(store.socketId, {
+                event: 'newOrder',
+                data: order
+            });
+        }
+    });
+}
+
+module.exports = { initializeSocket, sendMessageToSocketId, sendNewOrderToStores };
