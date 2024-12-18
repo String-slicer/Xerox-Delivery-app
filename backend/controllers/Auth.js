@@ -8,7 +8,7 @@ const mailSender=require("../utils/mailSender")
 const bcrypt = require("bcrypt");
 const {addStore} =require('./BlockChain')
 const { sendNewOrderToStores } = require('../socket');
-
+const {sendMessageToSocketId} =require('../socket')
 const Store=require("../models/Store")
 
 exports.sendotp = async (req, res) => {
@@ -314,3 +314,31 @@ exports.createOrder = async (req, res) => {
   
 	return baseCost;
   };
+
+exports.storeAcceptOrder = async (req, res) => {
+	try {
+		const { orderId,storeId } = req.body;
+		console.log(orderId , storeId);
+		const order = await Order.findById(orderId);
+		if (!order) {
+			return res.status(404).json({
+				success: false,
+				message: "Order not found",
+			});
+		}
+		order.status = "Accepted";
+		order.storeId = storeId;
+		await order.save();
+		const user=await User.findById(order.userId);
+		console.log(user);
+		 sendMessageToSocketId(user.socketId, {event:"storeAcceptedOrder", data: { orderId, status: "Accepted" }});
+		res.status(200).json({	
+			success: true,
+			message: "Order accepted successfully",
+		});
+	}
+	catch (error) {
+		console.error(error.message);
+		return res.status(500).json({ success: false, error: error.message });
+	}
+}

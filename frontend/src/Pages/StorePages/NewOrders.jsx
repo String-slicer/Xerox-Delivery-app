@@ -1,64 +1,62 @@
-import React, { useState, useEffect } from "react";
-import  {SocketContext}  from "../../context/socketcontext";
-import axios from "axios"; // Axios for making API calls
-import { useContext } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect, useContext } from "react";
+import { SocketContext } from "../../context/socketcontext";
+import { useDispatch, useSelector } from "react-redux";
+import { acceptOrder, cancelOrder } from "../../slices/storeSlice";
 
 const NewOrders = () => {
-  const [orders, setOrders] = useState([
-    { _id: "675e58a10c327c69dad03b20", customerName: "John Doe", documentType: "Invoice", status: "Pending" },
-    { _id: 2, customerName: "Jane Smith", documentType: "Contract", status: "Pending" },
-  ]);
-  const {socket} = useContext(SocketContext);
   const [loadingOrderId, setLoadingOrderId] = useState(false);
   const [allocatedOrders, setAllocatedOrders] = useState([]);
+  const { socket } = useContext(SocketContext);
+  const dispatch = useDispatch();
   const store = useSelector((state) => state.store.store);
+  const newOrders = useSelector((state) => state.store.newOrders) || [];
 
   useEffect(() => {
-    // Listen for new orders from Socket.IO
-    const handleNewOrder = (newOrder) => {
-      console.log(newOrder);
-      setOrders((prevOrders) => [...prevOrders, newOrder]);
-    };
-  
     const handleOrderStatusUpdate = (data) => {
       setLoadingOrderId(null);
-      console.log("orderStatusUpdate", data);
       setAllocatedOrders((prevAllocatedOrders) => [...prevAllocatedOrders, data.orderId]);
       alert(`Captain accepted for order ${data.orderId}`);
     };
-  
-    socket.on("newOrder", handleNewOrder);
+
     socket.on("orderStatusUpdate", handleOrderStatusUpdate);
-  
-    // Cleanup function to avoid duplicate listeners
+
     return () => {
-      socket.off("newOrder", handleNewOrder);
       socket.off("orderStatusUpdate", handleOrderStatusUpdate);
     };
   }, [socket]);
-  
 
   const handleAcceptOrder = async (orderId) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/orders/${orderId}/accept`);
-      if (response.status === 200) {
-        setOrders((prevOrders) =>
-          prevOrders.map((order) =>
-            order.id === orderId ? { ...order, status: "Accepted" } : order
-          )
-        );
+      console.log(orderId, store._id);
+      const response = await fetch(`http://localhost:4000/Order/storeAcceptOrder`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          orderId,
+          storeId: store._id,
+        }),
+      });
+    
+      if (response.ok) {
+        const data = await response.json();
+        dispatch(acceptOrder(orderId));
         alert(`Order ${orderId} Accepted.`);
+      } else {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
     } catch (error) {
-      console.error("Error accepting order:", error);
+      console.error("Error accepting the order:", error);
       alert("Failed to accept the order. Please try again.");
     }
   };
 
   const handleCancelOrder = (orderId) => {
     try {
-      setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
+      setAllocatedOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
+      socket.emit("cancel-order", { orderId, storeId: store._id });
+      dispatch(cancelOrder(orderId));
       alert(`Order ${orderId} Cancelled.`);
     } catch (error) {
       console.error("Error canceling order:", error);
@@ -68,51 +66,50 @@ const NewOrders = () => {
 
   const handleSearchCaptain = (orderId) => {
     setLoadingOrderId(orderId);
-    console.log(store._id);
-    socket.emit("find-captain", { orderId, range: 2,userId:store._id });
-    console.log("searching for captain with id"+orderId)
+    socket.emit("find-captain", { orderId, range: 2, userId: store._id });
   };
 
   return (
     <div className="max-w-7xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-lg">
       <h2 className="text-3xl font-semibold mb-6">New Orders</h2>
-
-      <div className="space-y-6">
-        {orders.map((order,index) => (
-          <div key={index} className="bg-gray-100 p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-medium">Order ID: {order._id}</h3>
-            <p className="text-lg text-gray-600">Customer: {order.customerName}</p>
-            <p className="text-lg text-gray-600">Document Type: {order.documentType}</p>
-            <p className="text-lg text-gray-600">Status: {order.status}</p>
-
-            <div className="mt-4 flex space-x-4">
-              <button
-                onClick={() => handleAcceptOrder(order._id)}
-                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500"
-              >
-                Accept Order
-              </button>
-              <button
-                onClick={() => handleCancelOrder(order._id)}
-                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500"
-              >
-                Cancel Order
-              </button>
-              <button
-                onClick={() => handleSearchCaptain(order._id)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500"
-                disabled={loadingOrderId === order.id || allocatedOrders.includes(order.id)}
-              >
-                {allocatedOrders.includes(order._id) ? "Captain Allocated" : (loadingOrderId === order._id ? "Searching..." : "Search for Captain")}
-              </button>
+      {newOrders.length === 0 ? (
+        <div className="text-center text-gray-600">No new orders</div>
+      ) : (
+        <div className="space-y-6">
+          {newOrders.map((order) => (
+            <div key={order._id} className="bg-gray-100 p-6 rounded-lg shadow-md">
+              <h3 className="text-xl font-medium">Order ID: {order._id}</h3>
+              <p className="text-lg text-gray-600">Customer: {order.customerName}</p>
+              <p className="text-lg text-gray-600">Document Type: {order.documentType}</p>
+              <p className="text-lg text-gray-600">Status: {order.status}</p>
+              <div className="mt-4 flex space-x-4">
+                <button
+                  onClick={() => handleAcceptOrder(order._id)}
+                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500"
+                >
+                  Accept Order
+                </button>
+                <button
+                  onClick={() => handleCancelOrder(order._id)}
+                  className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500"
+                >
+                  Cancel Order
+                </button>
+                <button
+                  onClick={() => handleSearchCaptain(order._id)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500"
+                  disabled={loadingOrderId === order._id || allocatedOrders.includes(order._id)}
+                >
+                  {allocatedOrders.includes(order._id) ? "Captain Allocated" : (loadingOrderId === order._id ? "Searching..." : "Search for Captain")}
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
 export { NewOrders };
-
 export default NewOrders;

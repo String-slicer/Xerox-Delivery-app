@@ -9,6 +9,8 @@ import { Toaster } from "react-hot-toast";
 import AcceptedStatus from "../../components/usercomponents/AcceptedStatus";
 import {useGSAP} from "@gsap/react"
 import { SocketContext } from "../../context/socketcontext";
+import { useSelector } from "react-redux";
+
 
 function UserHome() {
   const [isFormOpen, setIsFormOpen] = useState(false); // State for form visibility
@@ -16,15 +18,25 @@ function UserHome() {
   const form = useRef(null); // Ref for the form element
   const { socket } = useContext(SocketContext);
   const [Accepted,setAccepted]=useState(false);
+  const user=useSelector((state)=>state.user.user);
   const buttonHandler = () => {
     console.log("button clicked");
     setIsFormOpen(!isFormOpen);
   };
+
+  
+    
+   
   useEffect(()=>{
-    socket.on("orderStatusUpdate",(data)=>{
+    socket.emit('join', {
+      userId:user._id, 
+      userType: 'user'
+  })
+    socket.on("storeAcceptedOrder",(data)=>{
       console.log(data);
       if(data.status==="Accepted"){
         setAccepted(true);
+        setIsWaiting(false);
       }
     },[socket])
   })

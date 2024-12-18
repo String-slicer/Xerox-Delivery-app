@@ -1,9 +1,9 @@
 import React, { createContext, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSocket as updateStoreSocket } from '../slices/storeSlice';
+import { updateSocket as updateStoreSocket, addNewOrder } from '../slices/storeSlice';
 import { updateSocket as updateCaptainSocket } from '../slices/captainSlice';
-import {updateSocket as updateUserSocket} from '../slices/userSlice';
+import { updateSocket as updateUserSocket } from '../slices/userSlice';
 export const SocketContext = createContext();
 
 const socket = io('http://localhost:4000'); // Replace with your server URL
@@ -23,6 +23,12 @@ const SocketProvider = ({ children }) => {
             }
             else{
                 dispatch(updateUserSocket(socket.id));
+            }
+        });
+
+        socket.on('newOrder', (newOrder) => {
+            if (store) {
+                dispatch(addNewOrder(newOrder));
             }
         });
 
