@@ -10,6 +10,7 @@ const NewOrders = () => {
   const dispatch = useDispatch();
   const store = useSelector((state) => state.store.store);
   const newOrders = useSelector((state) => state.store.newOrders) || [];
+  console.log(newOrders);
 
   useEffect(() => {
     const handleOrderStatusUpdate = (data) => {
@@ -77,33 +78,36 @@ const NewOrders = () => {
       ) : (
         <div className="space-y-6">
           {newOrders.map((order) => (
-            <div key={order._id} className="bg-gray-100 p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-medium">Order ID: {order._id}</h3>
-              <p className="text-lg text-gray-600">Customer: {order.customerName}</p>
-              <p className="text-lg text-gray-600">Document Type: {order.documentType}</p>
-              <p className="text-lg text-gray-600">Status: {order.status}</p>
-              <div className="mt-4 flex space-x-4">
-                <button
-                  onClick={() => handleAcceptOrder(order._id)}
-                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500"
-                >
-                  Accept Order
-                </button>
-                <button
-                  onClick={() => handleCancelOrder(order._id)}
-                  className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500"
-                >
-                  Cancel Order
-                </button>
-                <button
-                  onClick={() => handleSearchCaptain(order._id)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500"
-                  disabled={loadingOrderId === order._id || allocatedOrders.includes(order._id)}
-                >
-                  {allocatedOrders.includes(order._id) ? "Captain Allocated" : (loadingOrderId === order._id ? "Searching..." : "Search for Captain")}
-                </button>
+            order && order.userId && (
+              <div key={order._id} className="bg-gray-100 p-6 rounded-lg shadow-md">
+                <h3 className="text-xl font-medium">Order ID: {order._id}</h3>
+                <p className="text-lg text-gray-600">Customer: {order.userId.fullName.firstName}</p>
+                <p className="text-lg text-gray-600">Document Type: {order.documents[0].name}</p>
+                <p className="text-lg text-gray-600">Status: {order.status}</p>
+                <p className="text-lg text-gray-600">Amount: {order.totalAmount}</p>
+                <div className="mt-4 flex space-x-4">
+                  <button
+                    onClick={() => handleAcceptOrder(order._id)}
+                    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500"
+                  >
+                    Accept Order
+                  </button>
+                  <button
+                    onClick={() => handleCancelOrder(order._id)}
+                    className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500"
+                  >
+                    Cancel Order
+                  </button>
+                  <button
+                    onClick={() => handleSearchCaptain(order._id)}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500"
+                    disabled={loadingOrderId === order._id || allocatedOrders.includes(order._id)}
+                  >
+                    {allocatedOrders.includes(order._id) ? "Captain Allocated" : (loadingOrderId === order._id ? "Searching..." : "Search for Captain")}
+                  </button>
+                </div>
               </div>
-            </div>
+            )
           ))}
         </div>
       )}

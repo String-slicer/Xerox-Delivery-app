@@ -13,6 +13,7 @@ import StoreLoginPage from './Pages/StorePages/StoreLoginPage';
 import StoreSignupPage from './Pages/StorePages/StoreSignupPage';
 import { Toaster} from 'react-hot-toast';
 import NewOrders from './Pages/StorePages/newOrders'
+import AcceptedPage from './Pages/UserPages/AcceptedPage'
 import TrackOrders from './Pages/StorePages/TrackOrders';
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/storeLogin" element={<StoreLoginPage/>} />
             <Route path="/new-orders" element={<NewOrders />} />
            <Route path="/track-orders" element={<TrackOrders />} />
+           <Route path="/accepted" element={<AcceptedPage />} />
           </Routes>
         
     </div>

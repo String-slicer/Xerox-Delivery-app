@@ -1,4 +1,4 @@
-import React, { useState, useRef,useContext, useEffect } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import Navbar from "../../components/usercomponents/Navbar";
 import Map from "../../components/usercomponents/Map";
 import OrderButton from "../../components/usercomponents/OrderButton";
@@ -7,49 +7,53 @@ import gsap from "gsap";
 import WaitingToConfirm from "../../components/usercomponents/WaitingToConfirm";
 import { Toaster } from "react-hot-toast";
 import AcceptedStatus from "../../components/usercomponents/AcceptedStatus";
-import {useGSAP} from "@gsap/react"
+import { useGSAP } from "@gsap/react";
 import { SocketContext } from "../../context/socketcontext";
-import { useSelector } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setAcceptedOrderData } from "../../slices/userSlice";
 
 function UserHome() {
   const [isFormOpen, setIsFormOpen] = useState(false); // State for form visibility
   const [isWaiting, setIsWaiting] = useState(false); // State for waiting confirmation visibility
   const form = useRef(null); // Ref for the form element
   const { socket } = useContext(SocketContext);
-  const [Accepted,setAccepted]=useState(false);
-  const user=useSelector((state)=>state.user.user);
+  const [Accepted, setAccepted] = useState(false);
+  const user = useSelector((state) => state.user.user);
+  const acceptedOrderData = useSelector((state) => state.user.acceptedOrderData);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const buttonHandler = () => {
     console.log("button clicked");
     setIsFormOpen(!isFormOpen);
   };
 
-  
-    
-   
-  useEffect(()=>{
+  useEffect(() => {
     socket.emit('join', {
-      userId:user._id, 
+      userId: user._id,
       userType: 'user'
-  })
-    socket.on("storeAcceptedOrder",(data)=>{
+    });
+    socket.on("storeAcceptedOrder", (data) => {
       console.log(data);
-      if(data.status==="Accepted"){
+      if (data.order.status === "Accepted") {
         setAccepted(true);
         setIsWaiting(false);
+        dispatch(setAcceptedOrderData(data.order));
+        navigate('/accepted');
       }
-    },[socket])
-  })
-  useGSAP(()=>{
+    });
+  }, [socket, user, dispatch, navigate]);
+
+  useGSAP(() => {
     if (!isFormOpen) {
       gsap.to(form.current, { display: "none", opacity: 0, duration: 0.5 });
     } else {
       gsap.to(form.current, { display: "block", opacity: 1, duration: 0.5 });
     }
-  },[isFormOpen])
+  }, [isFormOpen]);
 
   const closeFormHandler = () => {
-   
     setIsFormOpen(false);
   };
 
@@ -60,7 +64,6 @@ function UserHome() {
 
   return (
     <div className="relative">
-   
       {/* Navbar */}
       <Navbar />
 
@@ -90,13 +93,11 @@ function UserHome() {
           <WaitingToConfirm />
         </div>
       )}
-      { Accepted && (
-
-      <div className="fixed z-[10000] bottom-0 w-full h-[50%] bg-black text-white flex justify-center items-center">
-        <AcceptedStatus></AcceptedStatus>
-      </div>
-      )
-      }
+      {Accepted && acceptedOrderData && (
+        <div className="fixed z-[10000] bottom-0 w-full h-[50%] bg-black text-white flex justify-center items-center">
+          <AcceptedStatus orderData={acceptedOrderData}></AcceptedStatus>
+        </div>
+      )}
     </div>
   );
 }

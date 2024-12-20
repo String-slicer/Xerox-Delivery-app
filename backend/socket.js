@@ -76,7 +76,8 @@ function initializeSocket(server) {
 
             const { ltd, lng } = store.location;
           const order= await orderModel.findByIdAndUpdate(orderId, { status: 'Pending' , storeId:payload.userId},{new:true});
-
+            const orderdetails=await order.populate('userId');
+            const orderdetailswithstore=await orderdetails.populate('storeId');
             // Find captains within the specified range
             // const captains = await captainModel.find({
             //     location: {
@@ -92,7 +93,7 @@ function initializeSocket(server) {
                 console.log(captains)
                 captains.forEach(captain => {
                     if (captain.socketId) {
-                        io.to(captain.socketId).emit('newOrder', { orderId, storeId: store._id });
+                        io.to(captain.socketId).emit('newOrder', {orderdetailswithstore});
                     }
                 });
 

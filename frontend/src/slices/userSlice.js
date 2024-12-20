@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     user: null,
+    acceptedOrderData: null,
 };
 
 export const userSlice = createSlice({
@@ -13,14 +14,17 @@ export const userSlice = createSlice({
         },
         logout: (state) => {
             state.user = null;
+            state.acceptedOrderData = null;
         },
-        updateSocket:(state,action)=>{
-            state.user.socketId=action.payload;
+        updateSocket: (state, action) => {
+            state.user.socketId = action.payload;
+        },
+        setAcceptedOrderData: (state, action) => {
+            state.acceptedOrderData = action.payload;
         }
-        
     },
 });
 
-export const { login, logout ,updateSocket} = userSlice.actions;
+export const { login, logout, updateSocket, setAcceptedOrderData } = userSlice.actions;
 
 export default userSlice.reducer;

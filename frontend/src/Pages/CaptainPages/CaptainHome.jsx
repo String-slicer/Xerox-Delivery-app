@@ -49,7 +49,7 @@ function CaptainHome() {
 
     socket.on('newOrder', (payload) => {
       console.log(payload);
-      setCurrentOrder(payload);
+      setCurrentOrder(payload.orderdetailswithstore);
       setOrderPopup(true);
     });
 
@@ -61,8 +61,9 @@ function CaptainHome() {
 
   const confirmOrder = () => {
     if (currentOrder) {
+      console.log("currentOrder", currentOrder);
       socket.emit('order-accepted-captain', {
-        orderId: currentOrder.orderId,
+        orderId: currentOrder._id,
         captainId: captain._id
       });
     }

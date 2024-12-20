@@ -43,6 +43,7 @@ export const storeSlice = createSlice({
         cancelOrder: (state, action) => {
             const orderId = action.payload;
             state.newOrders = state.newOrders.filter(order => order._id !== orderId);
+            state.acceptedOrders = state.acceptedOrders.filter(order => order._id !== orderId);
         }
     },
 });

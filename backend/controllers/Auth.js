@@ -284,9 +284,11 @@ exports.createOrder = async (req, res) => {
 	  });
   
 	  const savedOrder = await newOrder.save();
+	  const orderDetails = await Order.findById(savedOrder._id).populate('userId');
+	  console.log("order details",orderDetails);
 	  
 	  // Send new order to all stores
-      await sendNewOrderToStores(savedOrder);
+      await sendNewOrderToStores(orderDetails);
 
 	  res.status(201).json(savedOrder);
 	} catch (error) {
@@ -317,8 +319,8 @@ exports.createOrder = async (req, res) => {
 
 exports.storeAcceptOrder = async (req, res) => {
 	try {
-		const { orderId,storeId } = req.body;
-		console.log(orderId , storeId);
+		const { orderId, storeId } = req.body;
+		console.log(orderId, storeId);
 		const order = await Order.findById(orderId);
 		if (!order) {
 			return res.status(404).json({
@@ -326,19 +328,42 @@ exports.storeAcceptOrder = async (req, res) => {
 				message: "Order not found",
 			});
 		}
+		const store = await Store.findById(storeId);
+		if (!store) {
+			return res.status(404).json({
+				success: false,
+				message: "Store not found",
+			});
+		}
+		store.orders.push(orderId);
+		const captain = await Captain.findById(order.deliveryPartnerId);
+		if (!captain) {
+			return res.status(404).json({
+				success: false,
+				message: "Captain not found",
+			});
+		}
+		captain.orders.push(orderId);
 		order.status = "Accepted";
 		order.storeId = storeId;
+
 		await order.save();
-		const user=await User.findById(order.userId);
+		await store.save();
+		await captain.save();
+
+		const orderDetails = await Order.findById(orderId)
+			.populate("storeId")
+			.populate("deliveryPartnerId");
+
+		const user = await User.findById(order.userId);
 		console.log(user);
-		 sendMessageToSocketId(user.socketId, {event:"storeAcceptedOrder", data: { orderId, status: "Accepted" }});
-		res.status(200).json({	
+		sendMessageToSocketId(user.socketId, { event: "storeAcceptedOrder", data: { order: orderDetails } });
+		res.status(200).json({
 			success: true,
 			message: "Order accepted successfully",
 		});
-	}
-	catch (error) {
+	} catch (error) {
 		console.error(error.message);
 		return res.status(500).json({ success: false, error: error.message });
 	}
-}
+};
