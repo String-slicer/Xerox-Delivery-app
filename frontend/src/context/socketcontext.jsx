@@ -3,10 +3,11 @@ import { io } from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateSocket as updateStoreSocket, addNewOrder } from '../slices/storeSlice';
 import { updateSocket as updateCaptainSocket } from '../slices/captainSlice';
-import { updateSocket as updateUserSocket, setAcceptedOrderData } from '../slices/userSlice';
+import { updateSocket as updateUserSocket, setAcceptedOrderData, updateCaptainLocation } from '../slices/userSlice';
 export const SocketContext = createContext();
 
 const socket = io('http://localhost:4000'); // Replace with your server URL
+// const socket = io('https://ns2v1r0n-4000.inc1.devtunnels.ms/'); // Replace with your server URL
 
 const SocketProvider = ({ children }) => {
     const dispatch = useDispatch();
@@ -36,6 +37,11 @@ const SocketProvider = ({ children }) => {
             if (user) {
                 dispatch(setAcceptedOrderData(data.order));
             }
+        });
+
+        socket.on('captainLocationUpdate', (location) => {
+            console.log('Captain location updated');
+            dispatch(updateCaptainLocation(location));
         });
 
         socket.on('disconnect', () => {

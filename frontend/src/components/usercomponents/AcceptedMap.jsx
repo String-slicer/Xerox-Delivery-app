@@ -1,78 +1,96 @@
+
+
+
 import React, { useEffect, useRef, useState } from 'react';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet-routing-machine';
-import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
 const AcceptedMap = ({ orderData }) => {
   const mapRef = useRef(null);
-  const [userLocation, setUserLocation] = useState(null);
+  const [mapInstance, setMapInstance] = useState(null);
+  const [userLocation, setUserLocation] = useState({ lat: 16.3157904, lng: 80.4152564 }); // Default user location
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation({ lat: latitude, lng: longitude });
-      },
-      (error) => {
-        console.error("Error fetching user location:", error);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      }
+    // Initialize map
+    const map = L.map(mapRef.current).setView(
+      [orderData.storeId.location.ltd, orderData.storeId.location.lng],
+      25
     );
-  }, []);
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    setMapInstance(map);
+
+    // Cleanup on unmount
+    return () => {
+      map.remove();
+    };
+  }, [orderData]);
 
   useEffect(() => {
-    if (!orderData || !orderData.storeId || !userLocation || !orderData.deliveryPartnerId) {
-      return;
-    }
+    if (!mapInstance) return;
 
-    const map = mapRef.current;
+    // Add markers with permanent labels
+    const addMarkerWithLabel = (lat, lng, color, label) => {
+      // Add marker
+      L.circleMarker([lat, lng], {
+        color,
+        radius: 8,
+      }).addTo(mapInstance);
 
-    if (map) {
-      const routingControl = L.Routing.control({
-        waypoints: [
-          L.latLng(orderData.deliveryPartnerId.location.ltd, orderData.deliveryPartnerId.location.lng),
-          L.latLng(orderData.storeId.location.ltd, orderData.storeId.location.lng),
-          L.latLng(userLocation.lat, userLocation.lng)
-        ],
-        routeWhileDragging: true,
-        router: L.Routing.osrmv1({
-          serviceUrl: `https://router.project-osrm.org/route/v1/bike/`
-        })
-      }).addTo(map);
+      // Add label
+      L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: 'custom-label',
+          html: `<div style="color: ${color}; font-weight: bold;">${label}</div>`,
+          iconSize: [0, 0], // No icon size, only the label will show
+        }),
+      }).addTo(mapInstance);
+    };
 
-      return () => {
-        map.removeControl(routingControl);
-      };
-    }
-  }, [orderData, userLocation]);
+    // Add markers for "Captain", "Store", and "You"
+    addMarkerWithLabel(
+      orderData.deliveryPartnerId.location.ltd,
+      orderData.deliveryPartnerId.location.lng,
+      'red',
+      'Captain'
+    );
 
-  return (
-    <MapContainer
-      center={[orderData?.storeId?.location?.ltd || 0, orderData?.storeId?.location?.lng || 0]}
-      zoom={12}
-      scrollWheelZoom
-      className="w-full h-full"
-      whenCreated={(mapInstance) => { mapRef.current = mapInstance; }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      {orderData && userLocation && (
-        <>
-          <Marker position={[orderData.storeId.location.ltd, orderData.storeId.location.lng]} title="Store Location" />
-          <Marker position={[userLocation.lat, userLocation.lng]} title="User Location" />
-          <Marker position={[orderData.deliveryPartnerId.location.ltd, orderData.deliveryPartnerId.location.lng]} title="Captain Location" />
-        </>
-      )}
-    </MapContainer>
-  );
+    addMarkerWithLabel(
+      orderData.storeId.location.ltd,
+      orderData.storeId.location.lng,
+      'green',
+      'Store'
+    );
+
+    addMarkerWithLabel(userLocation.lat, userLocation.lng, 'blue', 'You');
+
+    // Fetch and draw route using OSRM
+    fetch(
+      `https://router.project-osrm.org/route/v1/driving/${orderData.deliveryPartnerId.location.lng},${orderData.deliveryPartnerId.location.ltd};${orderData.storeId.location.lng},${orderData.storeId.location.ltd};${userLocation.lng},${userLocation.lat}?overview=full&geometries=geojson`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.routes && data.routes.length > 0) {
+          const route = data.routes[0].geometry;
+          const geojsonLayer = L.geoJSON(route, {
+            style: {
+              color: '#0073e6',
+              weight: 4,
+            },
+          });
+          geojsonLayer.addTo(mapInstance);
+        } else {
+          console.error('No route found.');
+        }
+      })
+      .catch((error) => console.error('Error fetching route:', error));
+  }, [mapInstance, orderData, userLocation]);
+
+  return <div ref={mapRef} style={{ width: '100%', height: '50vh' }} />;
 };
 
 export default AcceptedMap;

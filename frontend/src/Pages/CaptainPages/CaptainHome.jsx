@@ -44,7 +44,7 @@ function CaptainHome() {
     };
    
 
-    const locationInterval = setInterval(updateLocation, 10000);
+    const locationInterval = setInterval(updateLocation, 15000);
     updateLocation();
 
     socket.on('newOrder', (payload) => {
