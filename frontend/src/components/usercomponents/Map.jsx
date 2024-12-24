@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { SocketContext } from "../../context/socketcontext";
 
 // Configure default marker icons
 const defaultIcon = L.icon({
@@ -18,6 +19,7 @@ const Map = () => {
   const [currentPosition, setCurrentPosition] = useState(null);
   const [accuracy, setAccuracy] = useState(null);
   const [isError, setIsError] = useState(false);
+  const { socket } = useContext(SocketContext);
 
   useEffect(() => {
     // First, attempt to get the current position
@@ -28,6 +30,10 @@ const Map = () => {
           setCurrentPosition([latitude, longitude]);
           setAccuracy(accuracy);
           setIsError(false);
+          socket.emit('update-location-user', {
+            userId: user._id,
+            location: { ltd: latitude, lng: longitude }
+          });
         },
         (error) => {
           console.error("Error fetching location:", error);
@@ -51,6 +57,10 @@ const Map = () => {
         setCurrentPosition([latitude, longitude]);
         setAccuracy(accuracy); // Update accuracy
         setIsError(false);
+        socket.emit('update-location-user', {
+          userId: user._id,
+          location: { ltd: latitude, lng: longitude }
+        });
       },
       (error) => {
         console.error("Error fetching location:", error);
@@ -66,7 +76,7 @@ const Map = () => {
 
     // Cleanup watcher on component unmount
     return () => navigator.geolocation.clearWatch(watchId);
-  }, []);
+  }, [socket]);
 
   return (
     <div className="flex justify-center items-center w-full h-full bg-gray-100">

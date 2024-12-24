@@ -34,6 +34,48 @@ function UserHome() {
       userId: user._id,
       userType: 'user'
     });
+
+    const updateUserLocation = () => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          socket.emit('update-location-user', {
+            userId: user._id,
+            location: { ltd: latitude, lng: longitude }
+          });
+        },
+        (error) => {
+          console.error("Error fetching location:", error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    };
+
+    updateUserLocation();
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        socket.emit('update-location-user', {
+          userId: user._id,
+          location: { ltd: latitude, lng: longitude }
+        });
+      },
+      (error) => {
+        console.error("Error fetching location:", error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+
+    return () => navigator.geolocation.clearWatch(watchId);
+
     socket.on("storeAcceptedOrder", (data) => {
       console.log(data);
       if (data.order.status === "Accepted") {

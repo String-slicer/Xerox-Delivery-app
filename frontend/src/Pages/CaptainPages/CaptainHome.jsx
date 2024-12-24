@@ -6,7 +6,10 @@ import OrderPopUp from '../../components/captaincomponents/OrderPopUp'
 import { useGSAP } from '@gsap/react'
 import { gsap } from 'gsap';
 import { SocketContext } from '../../context/socketcontext';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import { updateCurrentOrder } from '../../slices/captainSlice';
 
 function CaptainHome() {
   const [OrderPopup, setOrderPopup] = useState(false);
@@ -14,6 +17,8 @@ function CaptainHome() {
   const { socket } = useContext(SocketContext);
   const captain = useSelector((state) => state.captain.captain);
   const [currentOrder, setCurrentOrder] = useState(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useGSAP(() => {
     if (OrderPopup) {
@@ -66,6 +71,8 @@ function CaptainHome() {
         orderId: currentOrder._id,
         captainId: captain._id
       });
+      dispatch(updateCurrentOrder(currentOrder));
+      navigate('/accepted-order-page');
     }
   };
 

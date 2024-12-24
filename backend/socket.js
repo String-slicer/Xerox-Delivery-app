@@ -72,6 +72,22 @@ function initializeSocket(server) {
             console.log("store location updated");
         });
 
+        socket.on('update-location-user', async (data) => {
+            const { userId, location } = data;
+
+            if (!location || !location.ltd || !location.lng) {
+                return socket.emit('error', { message: 'Invalid location data' });
+            }
+
+            await userModel.findByIdAndUpdate(userId, {
+                location: {
+                    ltd: location.ltd,
+                    lng: location.lng
+                }
+            });
+            console.log("User location updated");
+        });
+
         socket.on('find-captain', async (payload) => {
             console.log("Received 'find-captain' message:", payload);
             const { orderId, range } = payload;

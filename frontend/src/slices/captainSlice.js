@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     captain: null,
+    currentOrder: null,
 };
 
 export const captainSlice = createSlice({
@@ -14,12 +15,15 @@ export const captainSlice = createSlice({
         captainlogout: (state) => {
             state.captain = null;
         },
-        updateSocket:(state,action)=>{
-            state.captain.socketId=action.payload;
+        updateSocket: (state, action) => {
+            state.captain.socketId = action.payload;
+        },
+        updateCurrentOrder: (state, action) => {
+            state.currentOrder = action.payload;
         }
     },
 });
 
-export const { captainlogin, captainlogout,updateSocket } = captainSlice.actions;
+export const { captainlogin, captainlogout, updateSocket, updateCurrentOrder } = captainSlice.actions;
 
 export default captainSlice.reducer;
