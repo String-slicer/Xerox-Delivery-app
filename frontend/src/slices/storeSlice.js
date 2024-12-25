@@ -44,10 +44,16 @@ export const storeSlice = createSlice({
             const orderId = action.payload;
             state.newOrders = state.newOrders.filter(order => order._id !== orderId);
             state.acceptedOrders = state.acceptedOrders.filter(order => order._id !== orderId);
+        },
+        updateOrderStatus: (state, action) => {
+            const orderIndex = state.acceptedOrders.findIndex(order => order._id === action.payload.orderId);
+            if (orderIndex !== -1) {
+                state.acceptedOrders[orderIndex].status = action.payload.status;
+            }
         }
     },
 });
 
-export const { storelogin, storelogout, updateSocket, addNewOrder, acceptOrder, cancelOrder } = storeSlice.actions;
+export const { storelogin, storelogout, updateSocket, addNewOrder, acceptOrder, cancelOrder, updateOrderStatus } = storeSlice.actions;
 
 export default storeSlice.reducer;

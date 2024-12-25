@@ -5,7 +5,7 @@ import L from "leaflet";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { SocketContext } from "../../context/socketcontext";
-
+import { useSelector } from "react-redux";
 // Configure default marker icons
 const defaultIcon = L.icon({
   iconUrl: markerIcon,
@@ -20,7 +20,7 @@ const Map = () => {
   const [accuracy, setAccuracy] = useState(null);
   const [isError, setIsError] = useState(false);
   const { socket } = useContext(SocketContext);
-
+  const user = useSelector((state) => state.user.user);
   useEffect(() => {
     // First, attempt to get the current position
     const updatePosition = () => {

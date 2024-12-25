@@ -34,6 +34,15 @@ function UserHome() {
       userId: user._id,
       userType: 'user'
     });
+    socket.on("storeAcceptedOrder", (data) => {
+      console.log(data);
+      if (data.order.status === "Accepted") {
+        setAccepted(true);
+        setIsWaiting(false);
+        dispatch(setAcceptedOrderData(data.order));
+        navigate('/accepted');
+      }
+    }, [socket, dispatch, navigate]);
 
     const updateUserLocation = () => {
       navigator.geolocation.getCurrentPosition(
@@ -56,13 +65,18 @@ function UserHome() {
     };
 
     updateUserLocation();
+    let lastUpdateTime = null;
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        socket.emit('update-location-user', {
-          userId: user._id,
-          location: { ltd: latitude, lng: longitude }
-        });
+        const now = Date.now();
+        if (!lastUpdateTime || now - lastUpdateTime >= 10000) {
+          socket.emit('update-location-user', {
+            userId: user._id,
+            location: { ltd: latitude, lng: longitude }
+          });
+          lastUpdateTime = now;
+        }
       },
       (error) => {
         console.error("Error fetching location:", error);
@@ -76,15 +90,7 @@ function UserHome() {
 
     return () => navigator.geolocation.clearWatch(watchId);
 
-    socket.on("storeAcceptedOrder", (data) => {
-      console.log(data);
-      if (data.order.status === "Accepted") {
-        setAccepted(true);
-        setIsWaiting(false);
-        dispatch(setAcceptedOrderData(data.order));
-        navigate('/accepted');
-      }
-    });
+    
   }, [socket, user, dispatch, navigate]);
 
   useGSAP(() => {

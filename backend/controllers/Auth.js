@@ -284,6 +284,9 @@ exports.createOrder = async (req, res) => {
 	  });
   
 	  const savedOrder = await newOrder.save();
+	  var user=await User.findById(userId);
+		user.orders.push(savedOrder._id);
+		await user.save();
 	  const orderDetails = await Order.findById(savedOrder._id).populate('userId');
 	  console.log("order details",orderDetails);
 	  

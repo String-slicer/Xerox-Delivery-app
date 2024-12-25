@@ -25,7 +25,6 @@ function initializeSocket(server) {
                 await captainModel.findByIdAndUpdate(userId, { socketId: socket.id });
             } else if (userType === 'store') {
                 await storeModel.findByIdAndUpdate(userId, { socketId: socket.id });
-                console.log("Store connected");
             }
         });
 
@@ -158,6 +157,35 @@ function initializeSocket(server) {
             const user = await userModel.findById(order.userId);
             if (user && user.socketId) {
                 io.to(user.socketId).emit('orderStatusUpdate', { orderId, status: 'Accepted' });
+            }
+        });
+
+        socket.on('update-order-status', async (data) => {
+            const { orderId, status } = data;
+            console.log(`Order ${orderId} status updated to ${status}`);
+
+            // Find the order
+            const order = await orderModel.findById(orderId);
+            if (!order) {
+                return socket.emit('error', { message: 'Order not found' });
+            }
+
+            // Update the order status
+            order.status = status;
+            await order.save();
+
+            // Notify the store and user about the status update
+            if (order.storeId) {
+                const store = await storeModel.findById(order.storeId);
+                if (store && store.socketId) {
+                    console.log("order update sent to store");
+                    io.to(store.socketId).emit('orderStatusUpdate', { orderId, status });
+                }
+            }
+            const user = await userModel.findById(order.userId);
+            if (user && user.socketId) {
+                console.log("order update sent to user");
+                io.to(user.socketId).emit('orderStatusUpdate', { orderId, status });
             }
         });
 

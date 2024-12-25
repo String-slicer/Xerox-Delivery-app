@@ -1,11 +1,26 @@
 // TrackOrders.jsx
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { cancelOrder } from "../../slices/storeSlice";
+import { cancelOrder, updateOrderStatus } from "../../slices/storeSlice";
+import { SocketContext } from '../../context/socketcontext';
 
 const TrackOrders = () => {
   const dispatch = useDispatch();
   const acceptedOrders = useSelector((state) => state.store.acceptedOrders);
+  const { socket } = useContext(SocketContext);
+
+  useEffect(() => {
+    const handleOrderStatusUpdate = (data) => {
+      console.log('Order status updated:', data);
+      dispatch(updateOrderStatus(data));
+    };
+
+    socket.on('orderStatusUpdate', handleOrderStatusUpdate);
+
+    return () => {
+      socket.off('orderStatusUpdate', handleOrderStatusUpdate);
+    };
+  }, [socket, dispatch]);
 
   const handleDownload = (fileHash) => {
     const url = `https://ipfs.io/ipfs/${fileHash}`;

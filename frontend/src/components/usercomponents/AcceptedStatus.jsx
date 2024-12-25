@@ -1,6 +1,10 @@
 import React from 'react';
 
 const AcceptedStatus = ({ orderData }) => {
+  if (!orderData) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="w-full h-full bg-gray-100 flex justify-center items-center">
       <div className="bg-white shadow-lg rounded-lg p-6 w-full h-full max-w-4xl flex flex-col justify-between">

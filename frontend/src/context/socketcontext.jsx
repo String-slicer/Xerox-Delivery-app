@@ -1,9 +1,9 @@
 import React, { createContext, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSocket as updateStoreSocket, addNewOrder } from '../slices/storeSlice';
+import { updateSocket as updateStoreSocket, addNewOrder, updateOrderStatus } from '../slices/storeSlice';
 import { updateSocket as updateCaptainSocket } from '../slices/captainSlice';
-import { updateSocket as updateUserSocket, setAcceptedOrderData, updateCaptainLocation } from '../slices/userSlice';
+import { updateSocket as updateUserSocket, setAcceptedOrderData, updateCaptainLocation,updateOrderStatus as updateOrderStatusUser } from '../slices/userSlice';
 export const SocketContext = createContext();
 
 const socket = io('http://localhost:4000'); // Replace with your server URL
@@ -42,6 +42,17 @@ const SocketProvider = ({ children }) => {
         socket.on('captainLocationUpdate', (location) => {
             console.log('Captain location updated');
             dispatch(updateCaptainLocation(location));
+        });
+
+        socket.on('orderStatusUpdate', (data) => {
+            console.log('Order status updated:', data);
+            if (store) {
+                dispatch(updateOrderStatus(data));
+            }
+            if(user){
+                dispatch(updateOrderStatusUser(data));
+                window.location.reload(); // Refresh the page to update the map
+            }
         });
 
         socket.on('disconnect', () => {
