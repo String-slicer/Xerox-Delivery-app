@@ -320,7 +320,6 @@ exports.createOrder = async (req, res) => {
 exports.storeAcceptOrder = async (req, res) => {
 	try {
 		const { orderId, storeId } = req.body;
-		console.log(orderId, storeId);
 		const order = await Order.findById(orderId);
 		if (!order) {
 			return res.status(404).json({
@@ -367,3 +366,102 @@ exports.storeAcceptOrder = async (req, res) => {
 		return res.status(500).json({ success: false, error: error.message });
 	}
 };
+
+exports.UserProfile=async(req,res)=>{
+	try {
+		const { email, firstName, lastName, contact, image } = req.body;
+	    
+		console.log(email,contact);
+		if (!email) {
+		  return res.status(400).json({ success: false, message: "Email is required." });
+		}
+	
+		const user = await User.findOne({ email });
+		if (!user) {
+		  return res.status(404).json({ success: false, message: "User not found." });
+		}
+	
+		if (firstName !== undefined) user.fullName.firstName = firstName;
+		if (lastName !== undefined) user.fullName.lastName = lastName;
+		if (contact !== undefined) user.contact = contact;
+		if (image !== undefined) user.image = image;
+	
+
+		await user.save();
+	
+		res.status(200).json({
+		  success: true,
+		  message: "Profile updated successfully.",
+		  user: {
+			id: user._id,
+			email: user.email,
+			fullName: user.fullName,
+			contact: user.contact,
+			image: user.image,
+		  },
+		});
+	  } catch (error) {
+		console.error("Error updating profile:", error);
+		res.status(500).json({ success: false, message: "An error occurred while updating the profile." });
+	  }
+}
+
+exports.CaptainProfile= async(req,res)=>{
+    const { email, firstName, lastName, contact, image, vehicleColor, vehiclePlate } = req.body;
+
+    try {
+        const captain = await Captain.findOne({email});
+
+        if (!captain) {
+            return res.status(404).json({ success: false, message: 'Captain not found' });
+        }
+
+        if (email) captain.email = email;
+        if (firstName) captain.fullName.firstName = firstName;
+        if (lastName) captain.fullName.lastName = lastName;
+        if (contact) captain.contact = contact;
+        if (image) captain.image = image;
+        if (vehicleColor) captain.vehicle.color = vehicleColor;
+        if (vehiclePlate) captain.vehicle.plate = vehiclePlate;
+
+        await captain.save();
+
+        return res.status(200).json({
+            success: true,
+            message: 'Profile updated successfully',
+            data: captain,
+        });
+    } catch (error) {
+        console.error('Error updating captain profile:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'An error occurred while updating the profile',
+        });
+    }
+}
+
+exports.StoreProfile= async(req,res)=>{
+    const { storeName, email, contact, address, image, locationLat, locationLng } = req.body;
+
+  try {
+    const store = await Store.findOne({ email });
+
+    if (!store) {
+      return res.status(404).json({ success: false, message: 'Store not found' });
+    }
+
+    if (storeName) store.storeName = storeName;
+    if (contact) store.contact = contact;
+    if (address) store.address = address;
+    if (image) store.image = image;
+    if (locationLat) store.location.ltd = locationLat;
+    if (locationLng) store.location.lng = locationLng;
+
+    await store.save();
+
+    res.status(200).json({ success: true, message: 'Store profile updated successfully', data: store });
+  } catch (error) {
+    console.error('Error updating store profile:', error);
+    res.status(500).json({ success: false, message: 'An error occurred while updating the store profile' });
+  }
+}

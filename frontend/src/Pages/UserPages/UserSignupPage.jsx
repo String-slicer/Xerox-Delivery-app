@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
+import { useNavigate } from "react-router-dom"; 
 
 const UserSignupPage = () => {
   const [formData, setFormData] = useState({
@@ -9,14 +9,14 @@ const UserSignupPage = () => {
     lastName: "",
     password: "",
     rePassword: "",
-    contact: "", // Added contact field
+    contact: "", 
   });
 
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [serverOtp, setServerOtp] = useState(""); 
 
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const navigate = useNavigate(); 
 
   const handleChange = (e) => {
     setFormData({
@@ -34,19 +34,19 @@ const UserSignupPage = () => {
 
     try {
       const response = await fetch("http://localhost:4000/User/sendotp", {
-        method: "POST", // HTTP method
+        method: "POST",
         headers: {
-          "Content-Type": "application/json", // Indicating the content type as JSON
+          "Content-Type": "application/json", 
         },
-        body: JSON.stringify({ email:formData.email }), // Sending the email in the request body
+        body: JSON.stringify({ email:formData.email }),
       });
-      const data = await response.json(); // Parsing the response as JSON
+      const data = await response.json();
       if (data.success) {
-        setServerOtp(data.otp); // Setting the OTP received from the server
-        alert(`OTP sent to ${formData.email}`); // Alerting the OTP sent
-        setOtpSent(true); // S etting the OTP sent state to true
+        setServerOtp(data.otp);
+        alert(`OTP sent to ${formData.email}`);
+        setOtpSent(true); 
       } else {
-        alert(data.message); // Alerting the error message
+        alert(data.message);
       }
     }
     catch(error){
@@ -57,7 +57,6 @@ const UserSignupPage = () => {
   const handleOtpVerify = () => {
     if (formData.otp === serverOtp) {
       setOtpVerified(true);
-      // alert("Email verified successfully!");
     } else {
       alert("Invalid OTP. Please try again.");
     }
@@ -81,7 +80,7 @@ const UserSignupPage = () => {
     console.log(data)
     if (data.success) {
       alert("User registered successfully!");
-      navigate("/userLogin"); // Navigate to login page
+      navigate("/userLogin");
     } else {
       alert(data.message);
     }
@@ -197,7 +196,6 @@ const UserSignupPage = () => {
                 />
               </div>
 
-              {/* Contact */}
               <div>
                 <label
                   htmlFor="contact"
@@ -217,7 +215,6 @@ const UserSignupPage = () => {
                 />
               </div>
 
-              {/* Password */}
               <div>
                 <label
                   htmlFor="password"

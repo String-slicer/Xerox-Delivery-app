@@ -12,9 +12,12 @@ import UserLoginPage from './Pages/UserPages/UserLoginPage'
 import StoreLoginPage from './Pages/StorePages/StoreLoginPage';
 import StoreSignupPage from './Pages/StorePages/StoreSignupPage';
 import { Toaster} from 'react-hot-toast';
-import NewOrders from './Pages/StorePages/newOrders'
+import NewOrders from './Pages/StorePages/NewOrders'
 import AcceptedPage from './Pages/UserPages/AcceptedPage'
 import TrackOrders from './Pages/StorePages/TrackOrders';
+import UserProfilePage from './Pages/UserPages/UserProfilePage';
+import  CaptainProfilePage from './Pages/CaptainPages/CaptainProfilePage';
+import StoreProfilePage from './Pages/StorePages/StoreProfilePage';
 function App() {
   return (
     <div>
@@ -33,6 +36,9 @@ function App() {
             <Route path="/new-orders" element={<NewOrders />} />
            <Route path="/track-orders" element={<TrackOrders />} />
            <Route path="/accepted" element={<AcceptedPage />} />
+           <Route path="/userProfile" element={<UserProfilePage />} />
+           <Route path="/captainProfile" element={< CaptainProfilePage/>} />
+           <Route path="/storeProfile" element={< StoreProfilePage/>} />
           </Routes>
         
     </div>
