@@ -12,6 +12,9 @@ const storeRoutes=require("./routes/Store")
 const blockchainRoutes=require("./routes/Blockchain")
 const {initializeSocket}=require("./socket")
 const orderRoutes=require('./routes/Orders')
+const {cloudinaryConnect}=require("./config/Cloudinary")    
+const fileUpload = require('express-fileupload');
+const paymentRouters=require("./routes/Payments")
 dotenv.config()
 
 const PORT=process.env.PORT||4000;
@@ -27,18 +30,26 @@ app.use(
     }
     )
 )
+app.use(fileUpload({
+    useTempFiles : true,
+    tempFileDir : '/tmp/'
+}));
+cloudinaryConnect();
+
 app.use("/User",userRoutes);
 app.use("/Captain",captainRoutes);
 app.use("/Store",storeRoutes);
 app.use("/Blockchain",blockchainRoutes);
 app.use("/Order",orderRoutes);
+app.use("/payments", paymentRouters);
+
+
 app.get("/",(req,res)=>{
     return res.json({
         success:true,
 		message:'Your server is up and running....'
 	});
 })
-
 const server=http.createServer(app)
 initializeSocket(server)
 

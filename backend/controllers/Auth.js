@@ -10,7 +10,7 @@ const {addStore} =require('./BlockChain')
 const { sendNewOrderToStores } = require('../socket');
 const {sendMessageToSocketId} =require('../socket')
 const Store=require("../models/Store")
-
+const {uploadImageToCloudinary} = require('../utils/imageUploader');
 exports.sendotp = async (req, res) => {
 	try {
 		const { email } = req.body;
@@ -468,3 +468,35 @@ exports.StoreProfile= async(req,res)=>{
     res.status(500).json({ success: false, message: 'An error occurred while updating the store profile' });
   }
 }
+
+
+exports.updateDisplayPicture = async (req, res) => {
+    try {
+	
+      const displayPicture = req.files.displayPicture;
+	  console.log(displayPicture);
+      const {userId} = req.body;
+      const image = await uploadImageToCloudinary(
+        displayPicture,
+        process.env.FOLDER_NAME,
+        1000,
+        1000
+      )
+      console.log(image)
+      const updatedProfile = await User.findByIdAndUpdate(
+        { _id: userId },
+        { image: image.secure_url },
+        { new: true }
+      )
+      res.send({
+        success: true,
+        message: `Image Updated successfully`,
+        data: updatedProfile,
+      })
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      })
+    }
+};

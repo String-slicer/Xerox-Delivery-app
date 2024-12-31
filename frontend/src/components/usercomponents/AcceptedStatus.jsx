@@ -1,4 +1,76 @@
 import React from 'react';
+import axios from 'axios';
+
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
+const handlePayment = async (orderData) => {
+  const res = await loadRazorpayScript();
+
+  if (!res) {
+    alert('Razorpay SDK failed to load. Are you online?');
+    return;
+  }
+
+  // Create order on the backend
+  const result = await axios.post('http://localhost:4000/payments/capturePayments', {
+    orderId: orderData._id,
+  });
+
+  if (!result.data.success) {
+    alert('Server error. Are you online?');
+    return;
+  }
+
+  const { amount, id: order_id, currency, notes } = result.data.razorpayOrder;
+
+  const options = {
+    key: 'rzp_test_XBHfdlQo3xQoMk', // Replace with your Razorpay key
+    amount: amount,
+    currency: currency,
+    name: 'Printify',
+    description: 'Test Transaction',
+    order_id: order_id,
+    handler: async function (response) {
+      const data = {
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature: response.razorpay_signature,
+        notes: notes,
+      };
+
+      const result = await axios.post('http://localhost:4000/payments/verifyPayment', data);
+
+      // if (result.data.success) {
+      //   alert('Payment successful');
+      // } else {
+      //   alert('Payment verification failed');
+      //   console.log(result.data.message);
+      // }
+    },
+    prefill: {
+      name: orderData.userName,
+      email: orderData.userEmail,
+      contact: orderData.userContact,
+    },
+    notes: {
+      orderId: orderData._id,
+    },
+    theme: {
+      color: '#3399cc',
+    },
+  };
+
+  const paymentObject = new window.Razorpay(options);
+  paymentObject.open();
+};
 
 const AcceptedStatus = ({ orderData }) => {
   if (!orderData) {
@@ -49,6 +121,12 @@ const AcceptedStatus = ({ orderData }) => {
 
         <div className="mt-4 p-4 rounded-lg text-center bg-green-100 text-green-600">
           <p className="font-bold text-lg">Order Accepted</p>
+          <button
+            onClick={() => handlePayment(orderData)}
+            className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
+          >
+            Make Payment
+          </button>
         </div>
       </div>
     </div>
