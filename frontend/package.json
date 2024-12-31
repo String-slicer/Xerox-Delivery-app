@@ -11,10 +11,6 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.1",
-    "@radix-ui/react-dialog": "^1.1.2",
-    "@radix-ui/react-separator": "^1.1.0",
-    "@radix-ui/react-slot": "^1.1.0",
-    "@radix-ui/react-tooltip": "^1.1.4",
     "@reduxjs/toolkit": "^2.4.0",
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
@@ -24,6 +20,7 @@
     "leaflet-routing-machine": "^3.2.12",
     "lucide-react": "^0.468.0",
     "maplibre-gl": "^4.7.1",
+    "print-js": "^1.6.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.4.1",

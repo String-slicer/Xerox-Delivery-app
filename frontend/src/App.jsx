@@ -16,6 +16,7 @@ import NewOrders from './Pages/StorePages/newOrders';
 import AcceptedPage from './Pages/UserPages/AcceptedPage';
 import TrackOrders from './Pages/StorePages/TrackOrders';
 import OrderAcceptedPage from './Pages/CaptainPages/OrderAcceptedPage';
+
 function App() {
   return (
     <div>
@@ -35,6 +36,7 @@ function App() {
            <Route path="/track-orders" element={<TrackOrders />} />
            <Route path="/accepted" element={<AcceptedPage />} />
            <Route path="/accepted-order-page" element={<OrderAcceptedPage />} />
+            {/* <Route path="/delivery-steps" element={<DeliverySteps />} /> */}
           </Routes>
         
     </div>
