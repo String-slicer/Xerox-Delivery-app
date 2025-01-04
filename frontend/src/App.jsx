@@ -19,6 +19,8 @@ import NewOrders from './Pages/StorePages/NewOrders'
 import UserProfilePage from './Pages/UserPages/UserProfilePage';
 import  CaptainProfilePage from './Pages/CaptainPages/CaptainProfilePage';
 import StoreProfilePage from './Pages/StorePages/StoreProfilePage';
+import Settings from './Pages/UserPages/Settings';
+
 function App() {
   return (
     <div>
@@ -41,6 +43,7 @@ function App() {
            <Route path="/userProfile" element={<UserProfilePage />} />
            <Route path="/captainProfile" element={< CaptainProfilePage/>} />
            <Route path="/storeProfile" element={< StoreProfilePage/>} />
+           <Route path="/userSettings" element={<Settings />} />
           </Routes>
         
     </div>

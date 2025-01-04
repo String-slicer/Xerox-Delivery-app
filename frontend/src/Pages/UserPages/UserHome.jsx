@@ -111,25 +111,25 @@ function UserHome() {
   };
 
   return (
-    <div className="relative">
-      {/* Navbar */}
+    <div className="relative bg-[#131C24] min-h-screen">
       <Navbar />
 
-      {/* Map Section */}
-      <div className="w-full h-[70vh] bg-red-200">
+      {/* Map Section with Overlay Gradient */}
+      <div className="relative w-full h-[70vh]">
         <Map />
+        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#131C24] to-transparent"></div>
       </div>
 
       {/* Order Button Section */}
-      <div className="flex items-center justify-center w-full h-[30vh]">
-        <div onClick={buttonHandler}>
+      <div className="flex items-center justify-center w-full h-[30vh] bg-[#1D2A36] relative">
+        <div className="transform hover:scale-105 transition-transform" onClick={buttonHandler}>
           <OrderButton />
         </div>
       </div>
 
-      {/* OrderForm Section */}
+      {/* Modal Overlays */}
       <div
-        className="absolute top-0 left-0 w-full h-full bg-white z-[1000] flex items-center justify-center"
+        className="absolute top-0 left-0 w-full min-h-[100vh] bg-[#131C24] bg-opacity-95 z-[1000] flex items-center justify-center"
         ref={form}
         style={{ display: "none", opacity: 0 }} // Initial hidden state
       >
@@ -137,12 +137,12 @@ function UserHome() {
       </div>
       {/* waiting to confirm  */}
       {isWaiting && (
-        <div className="w-full h-[50%] bottom-0 bg-white absolute z-[20000]">
+        <div className="w-full h-[50%] bottom-0 bg-[#1D2A36] absolute z-[20000] border-t border-[#32415D]">
           <WaitingToConfirm />
         </div>
       )}
       {Accepted && acceptedOrderData && (
-        <div className="fixed z-[10000] bottom-0 w-full h-[50%] bg-black text-white flex justify-center items-center">
+        <div className="fixed z-[10000] bottom-0 w-full h-[50%] bg-[#1D2A36] border-t border-[#32415D] text-[#F8F9FB] flex justify-center items-center">
           <AcceptedStatus orderData={acceptedOrderData}></AcceptedStatus>
         </div>
       )}

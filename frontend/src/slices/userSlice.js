@@ -38,10 +38,29 @@ export const userSlice = createSlice({
                 console.log('Order status updated:', action.payload);
                 console.log("updated accepted order data", state.acceptedOrderData);
             }
-        }
+        },
+        updateUserProfile: (state, action) => {
+            state.user = {
+                ...state.user,
+                fullName: {
+                    firstName: action.payload.firstName,
+                    lastName: action.payload.lastName
+                },
+                contact: action.payload.contact,
+                image: action.payload.image
+            };
+        },
     },
 });
 
-export const { login, logout, updateSocket, setAcceptedOrderData, updateCaptainLocation, updateOrderStatus } = userSlice.actions;
+export const { 
+    login, 
+    logout, 
+    updateSocket, 
+    setAcceptedOrderData, 
+    updateCaptainLocation, 
+    updateOrderStatus,
+    updateUserProfile 
+} = userSlice.actions;
 
 export default userSlice.reducer;
