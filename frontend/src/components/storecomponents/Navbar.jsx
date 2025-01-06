@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 
 const Navbar = ({ setActivePage }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate=useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -16,7 +17,6 @@ const Navbar = ({ setActivePage }) => {
           <Link to="/">Xerox Store</Link>
         </div>
 
-        {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-8">
           <li>
             <button onClick={() => setActivePage('dashboard')} className="hover:underline">
@@ -31,6 +31,11 @@ const Navbar = ({ setActivePage }) => {
           <li>
             <button onClick={() => setActivePage('trackOrders')} className="hover:underline">
               Track Orders
+            </button>
+          </li>
+          <li>
+            <button onClick={()=>navigate("/storeOrders")} className="hover:underline">
+              Past Orders
             </button>
           </li>
           <li>

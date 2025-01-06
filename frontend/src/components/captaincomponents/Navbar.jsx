@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const navigate=useNavigate();
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -23,9 +24,9 @@ const Navbar = () => {
             </a>
           </li>
           <li>
-            <a href="#about" className="hover:underline">
+          <button onClick={()=>navigate("/captainOrders")} className="hover:underline">
               Orders
-            </a>
+            </button>
           </li>
           <li>
             <a href="#services" className="hover:underline">
