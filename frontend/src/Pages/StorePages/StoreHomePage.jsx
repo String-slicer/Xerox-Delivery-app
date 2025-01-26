@@ -5,6 +5,7 @@ import { NewOrders } from './NewOrders';
 import { TrackOrders } from './TrackOrders';
 import { SocketContext } from '../../context/socketcontext';
 import StoreProfilePage from './StoreProfilePage'
+import StoreOrdersPage from './StoreOrdersPage'
 function StoreHomePage() {
   
   const [activePage, setActivePage] = useState('dashboard');
@@ -148,6 +149,9 @@ function StoreHomePage() {
       case 'profile':
         // return <StoreProfilePage />;
         return <StoreProfilePage />;
+      case 'storeOrders':
+        return <StoreOrdersPage/>
+
       default:
         return renderDashboard();
     }

@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 
 const Navbar = ({ setActivePage }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activePage, setActivePageState] = useState('dashboard');
+  const navigate=useNavigate();
 
   const navItems = [
     { label: 'Dashboard', action: 'dashboard' },
     { label: 'New Orders', action: 'newOrders' },
     { label: 'Track Orders', action: 'trackOrders' },
     { label: 'Profile', action: 'profile' },
+    {label:'Past Orders',action:'storeOrders'}
   ];
 
   const handleNavClick = (action) => {
