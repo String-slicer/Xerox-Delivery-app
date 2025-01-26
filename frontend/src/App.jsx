@@ -20,6 +20,9 @@ import UserProfilePage from './Pages/UserPages/UserProfilePage';
 import  CaptainProfilePage from './Pages/CaptainPages/CaptainProfilePage';
 import StoreProfilePage from './Pages/StorePages/StoreProfilePage';
 import Settings from './Pages/UserPages/Settings';
+import UserOrdersPage from './Pages/UserPages/UserOrdersPage';
+import StoreOrdersPage from './Pages/StorePages/StoreOrdersPage';
+import CaptainOrdersPage from './Pages/CaptainPages/CaptainOrdersPage';
 
 function App() {
   return (
@@ -44,6 +47,9 @@ function App() {
            <Route path="/captainProfile" element={< CaptainProfilePage/>} />
            <Route path="/storeProfile" element={< StoreProfilePage/>} />
            <Route path="/userSettings" element={<Settings />} />
+           <Route path="/userOrders" element={<UserOrdersPage />} />
+           <Route path="/storeOrders" element={<StoreOrdersPage />} />
+           <Route path="/captainOrders" element={<CaptainOrdersPage />} />
           </Routes>
         
     </div>

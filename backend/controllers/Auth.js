@@ -500,3 +500,57 @@ exports.updateDisplayPicture = async (req, res) => {
       })
     }
 };
+
+exports.UserOrders=async(req,res)=>{
+	const { id } = req.params;
+
+    try {
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const orders = await Order.find({ _id: { $in: user.orders } });
+
+        res.status(200).json(orders);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching orders' });
+    }
+};
+
+exports.StoreOrders=async(req,res)=>{
+	const { id } = req.params;
+
+    try {
+        const store = await Store.findById(id);
+        if (!store) {
+            return res.status(404).json({ message: 'Store not found' });
+        }
+
+        const orders = await Order.find({ _id: { $in: store.orders } });
+
+        res.status(200).json(orders);
+    } catch(error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching orders' });
+    }
+};
+
+exports.CaptainOrders=async(req,res)=>{
+	const { id } = req.params;
+
+    try {
+        const captain = await Captain.findById(id);
+        if (!captain) {
+            return res.status(404).json({ message: 'Store not found' });
+        }
+
+        const orders = await Order.find({ _id: { $in: captain.orders } });
+
+        res.status(200).json(orders);
+    } catch(error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching orders' });
+    }
+};

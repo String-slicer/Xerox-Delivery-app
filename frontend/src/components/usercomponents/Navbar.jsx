@@ -7,7 +7,6 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Add logout logic here
     localStorage.removeItem('token');
     navigate('/');
   };
@@ -40,7 +39,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/orders" className="flex items-center space-x-2 hover:text-[#F4C753] transition-colors">
+            <Link to="/userOrders" className="flex items-center space-x-2 hover:text-[#F4C753] transition-colors">
               <FaReceipt className="text-lg" />
               <span>Orders</span>
             </Link>
