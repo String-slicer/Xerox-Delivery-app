@@ -71,36 +71,40 @@ const NewOrders = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-3xl font-semibold mb-6">New Orders</h2>
+    <div className="max-w-7xl mx-auto mt-4 sm:mt-8 p-2 sm:p-6">
+      <h2 className="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-6 text-[#F8F9FB]">New Orders</h2>
       {newOrders.length === 0 ? (
-        <div className="text-center text-gray-600">No new orders</div>
+        <div className="text-center text-[#F8F9FB] py-8">No new orders</div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {newOrders.map((order) => (
             order && order.userId && (
-              <div key={order._id} className="bg-gray-100 p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-medium">Order ID: {order._id}</h3>
-                <p className="text-lg text-gray-600">Customer: {order.userId.fullName.firstName}</p>
-                <p className="text-lg text-gray-600">Document Type: {order.documents[0].name}</p>
-                <p className="text-lg text-gray-600">Status: {order.status}</p>
-                <p className="text-lg text-gray-600">Amount: {order.totalAmount}</p>
-                <div className="mt-4 flex space-x-4">
+              <div key={order._id} className="bg-[#1D2A36] border border-[#32415D] p-4 sm:p-6 rounded-xl shadow-lg">
+                <div className="space-y-2 sm:space-y-3">
+                  <h3 className="text-lg sm:text-xl font-medium text-[#F8F9FB]">Order ID: {order._id}</h3>
+                  <div className="grid sm:grid-cols-2 gap-2">
+                    <p className="text-base sm:text-lg text-[#F8F9FB]">Customer: {order.userId.fullName.firstName}</p>
+                    <p className="text-base sm:text-lg text-[#F8F9FB]">Document: {order.documents[0].name}</p>
+                    <p className="text-base sm:text-lg text-[#F8F9FB]">Status: {order.status}</p>
+                    <p className="text-base sm:text-lg text-[#F8F9FB]">Amount: ₹{order.totalAmount}</p>
+                  </div>
+                </div>
+                <div className="mt-4 flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={() => handleAcceptOrder(order._id)}
-                    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500"
+                    className="w-full sm:w-auto bg-[#F4C753] text-[#141C24] px-4 py-2 rounded-lg hover:bg-[#f4c753ee]"
                   >
                     Accept Order
                   </button>
                   <button
                     onClick={() => handleCancelOrder(order._id)}
-                    className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500"
+                    className="w-full sm:w-auto bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500"
                   >
                     Cancel Order
                   </button>
                   <button
                     onClick={() => handleSearchCaptain(order._id)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500"
+                    className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500"
                     disabled={loadingOrderId === order._id || allocatedOrders.includes(order._id)}
                   >
                     {allocatedOrders.includes(order._id) ? "Captain Allocated" : (loadingOrderId === order._id ? "Searching..." : "Search for Captain")}

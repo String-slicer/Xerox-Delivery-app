@@ -1,8 +1,9 @@
 import React, { useEffect, useContext, useRef } from 'react';
 import AcceptedMap from '../../components/usercomponents/AcceptedMap';
 import AcceptedStatus from '../../components/usercomponents/AcceptedStatus';
+import Navbar from '../../components/usercomponents/Navbar';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateCaptainLocation, setAcceptedOrderData, updateOrderStatus } from '../../slices/userSlice'; // Import the new action
+import { updateCaptainLocation, setAcceptedOrderData, updateOrderStatus } from '../../slices/userSlice';
 import { SocketContext } from '../../context/socketcontext';
 
 const AcceptedPage = () => {
@@ -59,12 +60,33 @@ const AcceptedPage = () => {
   }, [socket, dispatch, acceptedOrderData]);
 
   return (
-    <div className="relative w-full h-full">
-      <div className="w-full h-[50vh]">
-        {acceptedOrderData && <AcceptedMap orderData={acceptedOrderData} />}
-      </div>
-      <div className="w-full h-[50vh]">
-        {acceptedOrderData && <AcceptedStatus orderData={acceptedOrderData} />}
+    <div className="relative flex size-full min-h-screen flex-col bg-[#131C24] dark group/design-root overflow-x-hidden font-sans">
+      <Navbar />
+      <div className="layout-container flex h-full grow flex-col pt-16"> {/* Added pt-16 to account for navbar height */}
+   
+
+        <div className="flex-1 px-4 py-6">
+          <div className="mx-auto max-w-[1200px]">
+            <div className="mb-6 rounded-xl border border-[#29374C] bg-[#1D2A36] p-4">
+              <h1 className="text-[#F8F9FB] text-2xl font-bold mb-2">Order Tracking</h1>
+              <p className="text-[#F8F9FB] opacity-80">Track your order in real-time</p>
+            </div>
+
+            <div className="grid gap-6">
+              <div className="rounded-xl border border-[#29374C] bg-[#1D2A36] overflow-hidden">
+                <div className="h-[50vh] w-full">
+                  {acceptedOrderData && <AcceptedMap orderData={acceptedOrderData} />}
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-[#29374C] bg-[#1D2A36]">
+                <div className="h-full w-full">
+                  {acceptedOrderData && <AcceptedStatus orderData={acceptedOrderData} />}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

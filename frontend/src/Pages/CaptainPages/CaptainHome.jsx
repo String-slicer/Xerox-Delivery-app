@@ -77,25 +77,27 @@ function CaptainHome() {
   };
 
   return (
-    <div>
-        <Navbar />
-      <div className='flex flex-col w-full h-screen'>
-        <div className='map h-[70vh] w-[100%]'>
-          <Map />
+    <div className="h-screen overflow-hidden bg-[#131C24]">
+      <Navbar />
+      <div className="h-[calc(100vh-64px)] mt-14 sm:mt-16 flex flex-col">
+        <div className="flex-1 px-2 sm:px-6 lg:px-10 pb-2 sm:pb-4">
+          <div className="h-full rounded-xl overflow-hidden border border-[#29374C]">
+            <Map />
+          </div>
         </div>
-        <div className=' h-[30vh]'>
+        <div className="h-auto px-2 sm:px-6 lg:px-10 pb-2 sm:pb-4">
           <DriverDetails />
         </div>
-
       </div>
-      {/* order popup  */}
-      <div className='fixed w-full  bottom-0 translate-y-full bg-white px-3 py-10 pt-12 z-[7000]' ref={OrderPopUpref}>
+
+      {/* Order popup */}
+      <div ref={OrderPopUpref} 
+           className="fixed w-full sm:w-[400px] sm:right-4 bottom-0 translate-y-full bg-[#1D2A36] border border-[#29374C] rounded-t-2xl px-2 sm:px-3 py-4 sm:py-6 z-[7000]">
         {OrderPopup && <OrderPopUp setOrderPopupPanel={setOrderPopup} order={currentOrder} confirmOrder={confirmOrder} />}
       </div>
-
     </div>
-  )
+  );
 }
 
-export default CaptainHome
+export default CaptainHome;
 

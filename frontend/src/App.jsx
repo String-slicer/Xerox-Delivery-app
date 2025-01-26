@@ -20,6 +20,7 @@ import UserProfilePage from './Pages/UserPages/UserProfilePage';
 import  CaptainProfilePage from './Pages/CaptainPages/CaptainProfilePage';
 import StoreProfilePage from './Pages/StorePages/StoreProfilePage';
 import Settings from './Pages/UserPages/Settings';
+import Temp from './Pages/Temp';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
            <Route path="/captainProfile" element={< CaptainProfilePage/>} />
            <Route path="/storeProfile" element={< StoreProfilePage/>} />
            <Route path="/userSettings" element={<Settings />} />
+           <Route path="/Landing" element={<Temp />} />
           </Routes>
         
     </div>

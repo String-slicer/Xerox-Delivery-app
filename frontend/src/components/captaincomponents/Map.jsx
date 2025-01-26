@@ -69,7 +69,7 @@ const Map = () => {
   }, []);
 
   return (
-    <div className="flex justify-center items-center w-full h-full bg-gray-100">
+    <div className="flex justify-center items-center w-full h-full bg-gray-100 relative z-[1]">
       <div className="w-full h-full rounded-lg overflow-hidden shadow-lg">
         {currentPosition ? (
           <MapContainer

@@ -1,14 +1,30 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { logout } from '../../slices/userSlice';
 import { FaUser, FaReceipt, FaCog, FaSignOutAlt, FaBars, FaTimes, FaHome } from 'react-icons/fa';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
+  const navLinkClass = (path) => {
+    return `flex items-center space-x-2 transition-colors ${
+      isActive(path) 
+        ? 'text-[#F4C753] font-medium' 
+        : 'hover:text-[#F4C753]'
+    }`;
+  };
 
   const handleLogout = () => {
-    // Add logout logic here
     localStorage.removeItem('token');
+    dispatch(logout());
     navigate('/');
   };
 
@@ -28,25 +44,25 @@ const Navbar = () => {
         {/* Desktop Menu */}
         <ul className="hidden md:flex items-center space-x-8">
           <li>
-            <Link to="/userHome" className="flex items-center space-x-2 hover:text-[#F4C753] transition-colors">
+            <Link to="/userHome" className={navLinkClass('/userHome')}>
               <FaHome className="text-lg" />
               <span>Home</span>
             </Link>
           </li>
           <li>
-            <Link to="/userProfile" className="flex items-center space-x-2 hover:text-[#F4C753] transition-colors">
+            <Link to="/userProfile" className={navLinkClass('/userProfile')}>
               <FaUser className="text-lg" />
               <span>Profile</span>
             </Link>
           </li>
           <li>
-            <Link to="/orders" className="flex items-center space-x-2 hover:text-[#F4C753] transition-colors">
+            <Link to="/orders" className={navLinkClass('/orders')}>
               <FaReceipt className="text-lg" />
               <span>Orders</span>
             </Link>
           </li>
           <li>
-            <Link to="/userSettings" className="flex items-center space-x-2 hover:text-[#F4C753] transition-colors">
+            <Link to="/userSettings" className={navLinkClass('/userSettings')}>
               <FaCog className="text-lg" />
               <span>Settings</span>
             </Link>
@@ -77,25 +93,25 @@ const Navbar = () => {
         <div className="md:hidden bg-[#29374C] border-t border-[#32415D]">
           <ul className="px-6 py-4 space-y-4">
             <li>
-              <Link to="/userHome" className="flex items-center space-x-2 hover:text-[#F4C753] transition-colors">
+              <Link to="/userHome" className={navLinkClass('/userHome')}>
                 <FaHome className="text-lg" />
                 <span>Home</span>
               </Link>
             </li>
             <li>
-              <Link to="/userProfile" className="flex items-center space-x-2 hover:text-[#F4C753] transition-colors">
+              <Link to="/userProfile" className={navLinkClass('/userProfile')}>
                 <FaUser className="text-lg" />
                 <span>Profile</span>
               </Link>
             </li>
             <li>
-              <Link to="/orders" className="flex items-center space-x-2 hover:text-[#F4C753] transition-colors">
+              <Link to="/orders" className={navLinkClass('/orders')}>
                 <FaReceipt className="text-lg" />
                 <span>Orders</span>
               </Link>
             </li>
             <li>
-              <Link to="/userSettings" className="flex items-center space-x-2 hover:text-[#F4C753] transition-colors">
+              <Link to="/userSettings" className={navLinkClass('/userSettings')}>
                 <FaCog className="text-lg" />
                 <span>Settings</span>
               </Link>

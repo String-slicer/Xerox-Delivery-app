@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
+import Temp from './Temp';
 gsap.registerPlugin(ScrollTrigger);
 
 const LandingPage = () => {
@@ -241,6 +241,7 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
+      <Temp></Temp>
     </div>
   );
 };

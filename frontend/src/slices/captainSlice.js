@@ -14,6 +14,8 @@ export const captainSlice = createSlice({
         },
         captainlogout: (state) => {
             state.captain = null;
+            state.currentOrder = null;
+            // Add any other states that need to be cleared
         },
         updateSocket: (state, action) => {
             state.captain.socketId = action.payload;
