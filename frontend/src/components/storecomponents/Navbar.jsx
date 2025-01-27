@@ -1,10 +1,19 @@
 import React, { useState } from "react";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { storelogout } from "../../slices/storeSlice";
 
 const Navbar = ({ setActivePage }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activePage, setActivePageState] = useState('dashboard');
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    dispatch(storelogout());
+    navigate('/');
+  };
 
   const navItems = [
     { label: 'Dashboard', action: 'dashboard' },
@@ -46,12 +55,12 @@ const Navbar = ({ setActivePage }) => {
             </li>
           ))}
           <li>
-            <Link
-              to="/logout"
+            <button
+              onClick={handleLogout}
               className="bg-[#F4C753] hover:bg-[#f4c753ee] text-[#141C24] px-4 py-2 rounded-lg transition-colors duration-200"
             >
               Logout
-            </Link>
+            </button>
           </li>
         </ul>
 
@@ -81,12 +90,12 @@ const Navbar = ({ setActivePage }) => {
               </li>
             ))}
             <li>
-              <Link
-                to="/logout"
-                className="block px-3 py-2 text-[#F4C753] hover:bg-[#29374C] rounded-lg transition-colors duration-200"
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left px-3 py-2 text-[#F4C753] hover:bg-[#29374C] rounded-lg transition-colors duration-200"
               >
                 Logout
-              </Link>
+              </button>
             </li>
           </ul>
         </div>

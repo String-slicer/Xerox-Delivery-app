@@ -5,6 +5,8 @@ import Navbar from '../../components/usercomponents/Navbar';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateCaptainLocation, setAcceptedOrderData, updateOrderStatus } from '../../slices/userSlice';
 import { SocketContext } from '../../context/socketcontext';
+import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const AcceptedPage = () => {
   const acceptedOrderData = useSelector((state) => state.user.acceptedOrderData);
@@ -13,6 +15,7 @@ const AcceptedPage = () => {
   const dispatch = useDispatch();
   const updateTimeoutRef = useRef(null);
   const user=useSelector((state)=>state.user.user);
+  const navigate = useNavigate();
   useEffect(() => {
     socket.emit('join', {
       userId: user._id,
@@ -37,27 +40,38 @@ const AcceptedPage = () => {
       }
     };
 
-    // const handleOrderStatusUpdate = (data) => {
-    //   console.log('Order status updated:', data);
-    //   dispatch(updateOrderStatus(data));
-    //   if (acceptedOrderData) {
-    //     console.log(acceptedOrderData);
-    //   } else {
-    //     console.error('Accepted order data is null or undefined');
-    //   }
-    // };
+    const handleOrderStatusUpdate = (data) => {
+      console.log('Order status updated:', data);
+      dispatch(updateOrderStatus(data));
+      
+      // Show toast notification based on status
+      switch(data.status) {
+        case 'Picked':
+          toast.success('Order has been picked up by the captain!');
+          break;
+        case 'Delivered':
+          toast.success('Order has been delivered successfully!');
+          break;
+        case 'Cancelled':
+          toast.error('Order has been cancelled');
+          navigate('/userHome');
+          break;
+        default:
+          toast.info(`Order status: ${data.status}`);
+      }
+    };
 
     socket.on('captainLocationUpdate', handleLocationUpdate);
-    // socket.on('orderStatusUpdate', handleOrderStatusUpdate);
+    socket.on('orderStatusUpdate', handleOrderStatusUpdate);
 
     return () => {
       socket.off('captainLocationUpdate', handleLocationUpdate);
-      // socket.off('orderStatusUpdate', handleOrderStatusUpdate);
+      socket.off('orderStatusUpdate', handleOrderStatusUpdate);
       if (updateTimeoutRef.current) {
         clearTimeout(updateTimeoutRef.current);
       }
     };
-  }, [socket, dispatch, acceptedOrderData]);
+  }, [socket, dispatch, acceptedOrderData, navigate]);
 
   return (
     <div className="relative flex size-full min-h-screen flex-col bg-[#131C24] dark group/design-root overflow-x-hidden font-sans">

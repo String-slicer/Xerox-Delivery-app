@@ -5,7 +5,7 @@ import OrderButton from "../../components/usercomponents/OrderButton";
 import OrderForm from "../../components/usercomponents/OrderForm";
 import gsap from "gsap";
 import WaitingToConfirm from "../../components/usercomponents/WaitingToConfirm";
-import { Toaster } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 import AcceptedStatus from "../../components/usercomponents/AcceptedStatus";
 import { useGSAP } from "@gsap/react";
 import { SocketContext } from "../../context/socketcontext";
@@ -40,6 +40,7 @@ function UserHome() {
         setAccepted(true);
         setIsWaiting(false);
         dispatch(setAcceptedOrderData(data.order));
+        toast.success('Your order has been accepted!');
         navigate('/accepted');
       }
     }, [socket, dispatch, navigate]);

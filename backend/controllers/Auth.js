@@ -501,56 +501,78 @@ exports.updateDisplayPicture = async (req, res) => {
     }
 };
 
-exports.UserOrders=async(req,res)=>{
-	const { id } = req.params;
-
+exports.UserOrders = async (req, res) => {
+    const { id } = req.params;
     try {
         const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const orders = await Order.find({ _id: { $in: user.orders } });
+        const orders = await Order.find({ _id: { $in: user.orders } })
+            .populate({
+                path: 'storeId',
+                select: 'StoreName email contact address'
+            })
+            .populate({
+                path: 'deliveryPartnerId',
+                select: 'fullName contact vehicle'
+            });
 
         res.status(200).json(orders);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error fetching orders' });
+        console.error('User orders error:', error);
+        res.status(500).json({ message: 'Error fetching orders', error: error.message });
     }
 };
 
-exports.StoreOrders=async(req,res)=>{
-	const { id } = req.params;
-
+exports.StoreOrders = async (req, res) => {
+    const { id } = req.params;
     try {
         const store = await Store.findById(id);
         if (!store) {
             return res.status(404).json({ message: 'Store not found' });
         }
 
-        const orders = await Order.find({ _id: { $in: store.orders } });
+        const orders = await Order.find({ storeId: id })
+            .populate({
+                path: 'userId',
+                select: 'fullName email contact image' // Select specific fields you want
+            })
+            .populate({
+                path: 'deliveryPartnerId',
+                select: 'fullName contact vehicle' // Select specific fields you want
+            });
 
         res.status(200).json(orders);
-    } catch(error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error fetching orders' });
+    } catch (error) {
+        console.error('Store orders error:', error);
+        res.status(500).json({ message: 'Error fetching orders', error: error.message });
     }
 };
 
-exports.CaptainOrders=async(req,res)=>{
-	const { id } = req.params;
-
+exports.CaptainOrders = async (req, res) => {
+    const { id } = req.params;
     try {
         const captain = await Captain.findById(id);
         if (!captain) {
-            return res.status(404).json({ message: 'Store not found' });
+            return res.status(404).json({ message: 'Captain not found' });
         }
 
-        const orders = await Order.find({ _id: { $in: captain.orders } });
+        const orders = await Order.find({ _id: { $in: captain.orders } })
+            .populate({
+                path: 'userId',
+                select: 'fullName email contact image'
+            })
+            .populate({
+                path: 'storeId',
+                select: 'StoreName contact address'
+            });
+    
 
         res.status(200).json(orders);
-    } catch(error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error fetching orders' });
+    } catch (error) {
+        console.error('Captain orders error:', error);
+        res.status(500).json({ message: 'Error fetching orders', error: error.message });
     }
 };

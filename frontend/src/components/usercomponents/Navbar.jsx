@@ -56,7 +56,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/orders" className={navLinkClass('/orders')}>
+            <Link to="/userOrders" className={navLinkClass('/orders')}>
               <FaReceipt className="text-lg" />
               <span>Orders</span>
             </Link>
@@ -105,7 +105,7 @@ const Navbar = () => {
               </Link>
             </li>
             <li>
-              <Link to="/orders" className={navLinkClass('/orders')}>
+              <Link to="/userOrders" className={navLinkClass('/orders')}>
                 <FaReceipt className="text-lg" />
                 <span>Orders</span>
               </Link>

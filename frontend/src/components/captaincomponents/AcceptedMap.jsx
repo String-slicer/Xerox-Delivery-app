@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useSelector } from 'react-redux';
+import User from '../../assets/user.png';
+import DeliveryBoy from "../../assets/deliveryScooter.png";
+import Store from "../../assets/store.png";
 
 const AcceptedMap = () => {
   const mapRef = useRef(null);
@@ -10,8 +13,10 @@ const AcceptedMap = () => {
   const currentOrder = useSelector((state) => state.captain.currentOrder);
 
   useEffect(() => {
-    // Initialize map
-    const map = L.map(mapRef.current).setView(
+    // Initialize map with zoomControl set to false
+    const map = L.map(mapRef.current, {
+      zoomControl: false  // This will remove the zoom control buttons
+    }).setView(
       [currentOrder.storeId.location.ltd, currentOrder.storeId.location.lng],
       30
     );
@@ -32,47 +37,94 @@ const AcceptedMap = () => {
   useEffect(() => {
     if (!mapInstance) return;
 
-    // Add markers with permanent labels
-    const addMarkerWithLabel = (lat, lng, color, label) => {
-      // Add marker
-      L.circleMarker([lat, lng], {
-        color,
-        radius: 8,
-      }).addTo(mapInstance);
-
-      // Add label
-      L.marker([lat, lng], {
-        icon: L.divIcon({
-          className: 'custom-label',
-          html: `<div style="color: ${color}; font-weight: bold;">${label}</div>`,
-          iconSize: [0, 0], // No icon size, only the label will show
-        }),
-      }).addTo(mapInstance);
+    // Custom icon creation function
+    const createCustomIcon = (iconUrl, color) => {
+      return L.divIcon({
+        className: 'custom-div-icon',
+        html: `
+          <div style="background-color: ${color}; padding: 3px; border-radius: 50%; border: 2px solid white;">
+            <img src="${iconUrl}" style="width: 20px; height: 20px;" />
+          </div>
+        `,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
+        popupAnchor: [0, -15]
+      });
     };
 
-    // Add markers for "Captain", "Store", and "You"
+    // Add markers with custom icons and permanent labels
+    const addMarkerWithLabel = (lat, lng, type) => {
+      let icon, color, label;
+      
+      switch(type) {
+        case 'captain':
+          icon = createCustomIcon(DeliveryBoy, '#FF4B4B');
+          color = '#FF4B4B';
+          label = 'You';
+          break;
+        case 'store':
+          icon = createCustomIcon(Store, '#4CAF50');
+          color = '#4CAF50';
+          label = 'Store';
+          break;
+        case 'user':
+          icon = createCustomIcon(User, '#2196F3');
+          color = '#2196F3';
+          label = 'Customer';
+          break;
+        default:
+          return;
+      }
+
+      // Add marker with custom icon
+      const marker = L.marker([lat, lng], { icon }).addTo(mapInstance);
+
+      // Add permanent label with improved styling
+      const labelIcon = L.divIcon({
+        className: 'custom-label',
+        html: `
+          <div style="
+            background-color: ${color};
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+          ">
+            ${label}
+          </div>
+        `,
+        iconSize: [100, 30],
+        iconAnchor: [50, -5],
+      });
+
+      L.marker([lat, lng], { icon: labelIcon }).addTo(mapInstance);
+      
+      return marker;
+    };
+
+    // Add markers and draw route with the new styling
     addMarkerWithLabel(
       captainLocation.lat,
       captainLocation.lng,
-      'red',
-      'Captain'
+      'captain'
     );
 
     addMarkerWithLabel(
       currentOrder.storeId.location.ltd,
       currentOrder.storeId.location.lng,
-      'green',
-      'Store'
+      'store'
     );
 
     addMarkerWithLabel(
       currentOrder.userId.location.ltd,
       currentOrder.userId.location.lng,
-      'blue',
       'user'
     );
 
-    // Fetch and draw route using OSRM
+    // Draw route with custom style
     fetch(
       `https://router.project-osrm.org/route/v1/driving/${captainLocation.lng},${captainLocation.lat};${currentOrder.storeId.location.lng},${currentOrder.storeId.location.ltd};${currentOrder.userId.location.lng},${currentOrder.userId.location.ltd}?overview=full&geometries=geojson`
     )
@@ -82,13 +134,14 @@ const AcceptedMap = () => {
           const route = data.routes[0].geometry;
           const geojsonLayer = L.geoJSON(route, {
             style: {
-              color: '#0073e6',
+              color: '#4A90E2',
               weight: 4,
-            },
+              opacity: 0.8,
+              dashArray: '10, 10',
+              lineCap: 'round'
+            }
           });
           geojsonLayer.addTo(mapInstance);
-        } else {
-          console.error('No route found.');
         }
       })
       .catch((error) => console.error('Error fetching route:', error));
