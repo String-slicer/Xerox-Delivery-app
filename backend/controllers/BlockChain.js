@@ -20,15 +20,15 @@ function connect() {
 
 // Add a file to the contract
 exports.uploadFile = async (req, res) => {
-  const { fileId, storeId, ipfsHash } = req.body; // Expect `fileId`, `storeId`, and `ipfsHash` in the request body
-
-  if (!fileId || !storeId || !ipfsHash) {
-    return res.status(400).json({ error: "fileId, storeId, and ipfsHash are required" });
+  const { fileId, ipfsHash } = req.body; // Expect `fileId` and `ipfsHash` in the request body
+  
+  if (!fileId || !ipfsHash) {
+    return res.status(400).json({ error: "fileId and ipfsHash are required" });
   }
 
   try {
     const contract = connect();
-    const tx = await contract.uploadFile(fileId, storeId, ipfsHash); // Call uploadFile in the contract
+    const tx = await contract.uploadFile(fileId, ipfsHash); // Call uploadFile in the contract
     await tx.wait(); // Wait for the transaction to be mined
     res.json({ message: "File uploaded successfully", transactionHash: tx.hash });
   } catch (error) {
@@ -37,7 +37,26 @@ exports.uploadFile = async (req, res) => {
   }
 };
 
-// Retrieve a file from the contract
+// Assign a store to a file
+exports.assignStore = async (req, res) => {
+  const { fileId, storeId } = req.body; // Expect `fileId` and `storeId` in the request body
+
+  if (!fileId || !storeId) {
+    return res.status(400).json({ error: "fileId and storeId are required" });
+  }
+
+  try {
+    const contract = connect();
+    const tx = await contract.assignStore(fileId, storeId); // Call assignStore in the contract
+    await tx.wait(); // Wait for the transaction to be mined
+    res.json({ message: "Store assigned successfully", transactionHash: tx.hash });
+  } catch (error) {
+    console.error("Error assigning store:", error);
+    res.status(500).json({ error: "Failed to assign store" });
+  }
+};
+
+// Retrieve a file from the contract 
 exports.getFile = async (req, res) => {
   const { fileId, storeId } = req.body; // Expect `fileId` and `storeId` in the request body
 
@@ -47,8 +66,8 @@ exports.getFile = async (req, res) => {
 
   try {
     const contract = connect();
-    const file = await contract.getFile(fileId, storeId); // Call getFile in the contract
-    res.json({ ipfsHash: file[0], timestamp: file[1].toString() }); // Convert BigInt to string
+    const ipfsHash = await contract.getFile(fileId, storeId); // Call getFile in the contract
+    res.json({ ipfsHash }); // Return the IPFS hash
   } catch (error) {
     console.error("Error retrieving file:", error);
     res.status(500).json({ error: "Failed to retrieve file" });
@@ -80,5 +99,23 @@ exports.addStore = async (req, res) => {
   } catch (error) {
     console.error("Error adding store:", error);
     res.status(500).json({ error: "Failed to add store" });
+  }
+};
+
+// Controller to check if a store ID is valid
+exports.isStoreValid = async (req, res) => {
+  const { storeId } = req.body; // Expect `storeId` in the request body
+
+  if (!storeId) {
+    return res.status(400).json({ error: "storeId is required" });
+  }
+
+  try {
+    const contract = connect();
+    const isValid = await contract.isStoreValid(storeId); // Call isStoreValid in the contract
+    res.json({ isValid });
+  } catch (error) {
+    console.error("Error checking store validity:", error);
+    res.status(500).json({ error: "Failed to check store validity" });
   }
 };
