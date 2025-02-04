@@ -22,7 +22,7 @@ const orderSchema = new mongoose.Schema(
         name: { type: String, required: true }, // Document name
         fileHash: { 
           type: String, 
-          required: true 
+          // required: true 
         }, // File URL or path
         folderType: {
           type: String,

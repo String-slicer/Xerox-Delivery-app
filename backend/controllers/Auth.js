@@ -6,7 +6,7 @@ const Order=require("../models/Orders")
 const otpGenerator= require("otp-generator")
 const mailSender=require("../utils/mailSender")
 const bcrypt = require("bcrypt");
-const {addStore} =require('./BlockChain')
+const {addStore, uploadFile} =require('./BlockChain')
 const { sendNewOrderToStores } = require('../socket');
 const {sendMessageToSocketId} =require('../socket')
 const Store=require("../models/Store")
@@ -196,41 +196,52 @@ exports.CaptainLogin=async(req,res)=>{
 
 }
 
-exports.StoreSignup=async(req,res)=>{
-    try{
-		const {StoreName,email, password,contact, address}=req.body;
-	
-		const checkStore=await Store.findOne({email});
-		if (checkStore) {
+exports.StoreSignup = async (req, res) => {
+    try {
+        const { StoreName, email, password, contact, address } = req.body;
+
+        const checkStore = await Store.findOne({ email });
+        if (checkStore) {
             return res.status(401).json({
                 success: false,
                 message: "Store is already registered",
             });
         }
-		const hashedPassword=await Store.hashPassword(password);
-		const newStore=new Store({
+        const hashedPassword = await Store.hashPassword(password);
+        const newStore = new Store({
             StoreName,
             email,
             password: hashedPassword,
             contact,
-			address,
-			image:`https://api.dicebear.com/5.x/initials/svg?seed=${StoreName}`,
-		})
-		await newStore.save();
+            address,
+            image: `https://api.dicebear.com/5.x/initials/svg?seed=${StoreName}`,
+        });
+        await newStore.save();
 
         // Add storeId to blockchain
-        await addStore({ body: { storeId: newStore._id.toString() } }, res);
-		
+        const blockchainResponse = await addStore({ body: { storeId: newStore._id.toString() } }, {
+            status: (code) => ({
+                json: (data) => ({ code, data })
+            })
+        });
+
+        if (blockchainResponse.code !== 200) {
+            return res.status(500).json({
+                success: false,
+                message: "Failed to add store to blockchain",
+            });
+        }
+
         res.status(201).json({
             success: true,
             message: "Store registered successfully",
         });
-	}
-    catch(error){
+    } catch (error) {
         console.log(error.message);
         return res.status(500).json({ success: false, error: error.message });
-	}
-}
+    }
+};
+
 exports.StoreLogin=async(req,res)=>{
 	const {email,password}=req.body;
 
@@ -266,39 +277,80 @@ exports.StoreLogin=async(req,res)=>{
 
 exports.createOrder = async (req, res) => {
 	try {
-		const { documents, userId} = req.body;
+		const { documents, userId } = req.body;
 		console.log(userId);
 		console.log(documents);
-  
-	  if (!userId || !documents) {
-		return res.status(400).json({ error: "User ID and documents are required" });
-	  }
-  
-	  const newOrder = new Order({
-		userId,
-		documents,
-		totalAmount: calculateTotalAmount(documents),
-		status: 'Pending',
-		// deliveryAddress: deliveryAddress,
-		// deliverylocation: deliverylocation,
-	  });
-  
-	  const savedOrder = await newOrder.save();
-	  var user=await User.findById(userId);
+
+		if (!userId || !documents) {
+			return res.status(400).json({ error: "User ID and documents are required" });
+		}
+
+		const newOrder = new Order({
+			userId,
+			documents: documents.map(doc => ({
+				name: doc.name,
+				folderType: doc.folderType,
+				folderColor: doc.folderColor,
+				copies: doc.copies,
+				size: doc.size,
+				color: doc.color,
+				binding: doc.binding,
+				lamination: doc.lamination,
+				paperQuality: doc.paperQuality,
+				pageCount: doc.pageCount,
+			})),
+			totalAmount: calculateTotalAmount(documents),
+			status: 'Pending',
+		});
+
+		const savedOrder = await newOrder.save();
+		const user = await User.findById(userId);
 		user.orders.push(savedOrder._id);
 		await user.save();
-	  const orderDetails = await Order.findById(savedOrder._id).populate('userId');
-	  console.log("order details",orderDetails);
-	  
-	  // Send new order to all stores
-      await sendNewOrderToStores(orderDetails);
 
-	  res.status(201).json(savedOrder);
+		const orderDetails = await Order.findById(savedOrder._id).populate('userId');
+		console.log("order details", orderDetails);
+
+		// Send new order to all stores
+		await sendNewOrderToStores(orderDetails);
+        var response= await fetch('http://localhost:4000/Blockchain/uploadFile',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    fileId: savedOrder._id.toString(),
+                    ipfsHash: documents[0].fileHash,
+                }), 
+            }
+            )
+            response =response.json();
+            console.log(response);
+
+		// Send response to the customer
+		res.status(201).json(savedOrder);
+
+		// Upload each document's IPFS hash to the blockchain
+		// await Promise.all(documents.map(async (doc, index) => {
+		// 	await uploadFile({
+		// 		body: {
+		// 			fileId: savedOrder._id.toString(),
+		// 			ipfsHash: doc.fileHash,
+		// 		}
+		// 	}, {
+		// 		status: (code) => ({
+		// 			json: (data) => ({ code, data })
+		// 		})
+		// 	});
+		// }));
+      
+
 	} catch (error) {
-	  console.error('Error creating order:', error);
-	  res.status(500).json({ error: 'Error creating order' });
+		console.error('Error creating order:', error);
+		res.status(500).json({ error: 'Error creating order' });
 	}
-  };
+};
   
   const calculateTotalAmount = (documents) => {
 	let totalAmount = 0;
@@ -356,10 +408,25 @@ exports.storeAcceptOrder = async (req, res) => {
 		const orderDetails = await Order.findById(orderId)
 			.populate("storeId")
 			.populate("deliveryPartnerId");
-
+        
 		const user = await User.findById(order.userId);
 		console.log(user);
 		sendMessageToSocketId(user.socketId, { event: "storeAcceptedOrder", data: { order: orderDetails } });
+
+		// Call the assignStore API in the blockchain file
+		var response = await fetch('http://localhost:4000/Blockchain/assignStore', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				fileId: orderId,
+				storeId: storeId,
+			}),
+		});
+		response = await response.json();
+		console.log(response);
+
 		res.status(200).json({
 			success: true,
 			message: "Order accepted successfully",

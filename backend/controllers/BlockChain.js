@@ -11,6 +11,7 @@ function connect() {
 
   // Replace with your deployed contract's address and ABI
   const contractAddress = fileAccessContract.networks[5777].address;
+  // const contractAddress = process.env.CONTRACT_ADDRESS;
   const contractABI = fileAccessContract.abi;
 
   // Create a contract instance

@@ -40,8 +40,8 @@ const NewOrders = () => {
         }),
       });
     
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
         dispatch(acceptOrder(orderId));
         alert(`Order ${orderId} Accepted.`);
       } else {

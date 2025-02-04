@@ -7,8 +7,9 @@ import printJS from "print-js";
 const TrackOrders = () => {
   const dispatch = useDispatch();
   const acceptedOrders = useSelector((state) => state.store.acceptedOrders);
+  const storeId= useSelector((state) => state.store.store._id);
   const { socket } = useContext(SocketContext);
-
+  console.log(acceptedOrders);
   useEffect(() => {
     const handleOrderStatusUpdate = (data) => {
       console.log("Order status updated:", data);
@@ -22,23 +23,42 @@ const TrackOrders = () => {
     };
   }, [socket, dispatch]);
 
-  const handlePrint = (doc) => {
-    const { fileHash, color, copies } = doc; // Extracting required details
-    const url = `https://ipfs.io/ipfs/${fileHash}`;
+  const handlePrint = async (doc, orderId, storeId) => {
+    try {
+      const response = await fetch('http://localhost:4000/Blockchain/getFile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileId: orderId,
+          storeId: storeId,
+        }),
+      });
+      const data = await response.json();
+      console.log("File hash:", data);
+      const fileHash = data.ipfsHash;
 
-    // Configuration for color and copies
-    const printSettings = {
-      printable: url,
-      type: "pdf",
-      showModal: true,
-      properties: {
-        colorMode: color === "Black & White" ? "bw" : "color", // Example setting for color mode
-        copies: copies, // Number of copies
-      },
-    };
+      const { color, copies } = doc; // Extracting required details
+      const url = `https://ipfs.io/ipfs/${fileHash}`;
+      console.log(url);
 
-    // Using printJS with enhanced settings
-    printJS(printSettings);
+      // Configuration for color and copies
+      const printSettings = {
+        printable: url,
+        type: "pdf",
+        showModal: true,
+        properties: {
+          colorMode: color === "Black & White" ? "bw" : "color", // Example setting for color mode
+          copies: copies, // Number of copies
+        },
+      };
+
+      // Using printJS with enhanced settings
+      printJS(printSettings);
+    } catch (error) {
+      console.error("Error fetching file hash:", error);
+    }
   };
 
   const handleDelete = (orderId) => {
@@ -102,7 +122,7 @@ const TrackOrders = () => {
                         </div>
                       </div>
                       <button
-                        onClick={() => handlePrint(doc)}
+                        onClick={() => handlePrint(doc, order._id, storeId)}
                         className="bg-[#F4C753] text-[#141C24] px-4 py-2 rounded-lg hover:bg-[#f4c753ee] transition-colors"
                       >
                         Print

@@ -45,7 +45,12 @@
 // const { MNEMONIC, PROJECT_ID } = process.env;
 
 // const HDWalletProvider = require('@truffle/hdwallet-provider');
+require('dotenv').config();
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 
+const privateKey = process.env.PRIVATE_KEY;
+const infuraProjectId = process.env.INFURA_PROJECT_ID;
+const MNEMONIC = process.env.MNEMONIC;
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -69,6 +74,13 @@ module.exports = {
      port: 7545,            // Standard Ethereum port (default: none)
      network_id: "*",       // Any network (default: none)
     },
+    sepolia: {
+      provider: () => new HDWalletProvider(privateKey, `https://sepolia.infura.io/v3/${infuraProjectId}`), // Replace with your Infura project ID and private key
+      network_id: 1115,
+      gas: 5000000,
+      gasPrice: 20000000000, // Adjust gas price as needed
+    },
+
     //
     // An additional network, but with some advanced options…
     // advanced: {

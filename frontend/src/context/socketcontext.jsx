@@ -30,6 +30,7 @@ const SocketProvider = ({ children }) => {
         socket.on('newOrder', (newOrder) => {
             if (store) {
                 dispatch(addNewOrder(newOrder));
+                console.log('New order received:', newOrder);
             }
         });
 
