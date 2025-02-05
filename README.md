@@ -72,8 +72,8 @@ Ensure you have the following installed on your system:
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/String-slicer/printify.git
-   cd printify
+   git clone https://github.com/String-slicer/Xerox-Delivery-app.git
+   cd Xerox-Delivery-app
    ```
 
 2. Navigate to the backend directory:
