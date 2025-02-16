@@ -219,13 +219,24 @@ exports.StoreSignup = async (req, res) => {
         await newStore.save();
 
         // Add storeId to blockchain
-        const blockchainResponse = await addStore({ body: { storeId: newStore._id.toString() } }, {
-            status: (code) => ({
-                json: (data) => ({ code, data })
-            })
-        });
+        // const blockchainResponse = await addStore({ body: { storeId: newStore._id.toString() } }, {
+        //     status: (code) => ({
+        //         json: (data) => ({ code, data })
+        //     })
+        // });
+        const blockchainResponse = await fetch('http://localhost:4000/Blockchain/addStore', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                storeId: newStore._id.toString(),
+            }),
+        }
+        );
 
-        if (blockchainResponse.code !== 200) {
+        console.log(blockchainResponse);
+        if (blockchainResponse.status !== 200) {
             return res.status(500).json({
                 success: false,
                 message: "Failed to add store to blockchain",

@@ -78,7 +78,7 @@ exports.getFile = async (req, res) => {
 // Controller to add a store
 exports.addStore = async (req, res) => {
   const { storeId } = req.body; // Expect `storeId` in the request body
-
+  console.log(storeId);
   if (!storeId) {
     return res.status(400).json({ error: "storeId is required" });
   }
@@ -87,15 +87,16 @@ exports.addStore = async (req, res) => {
     const contract = connect();
 
     // Call the `addStore` function in the contract
-    const tx = await contract.addStore(storeId);
+    const tx = await contract.addStore(storeId.toString());
 
     // Wait for the transaction to be mined
     await tx.wait();
-
-    res.json({
+    console.log(tx.hash);
+    // Modified response to ensure storeId is properly stringified
+    res.status(200).json({
       message: "Store added successfully",
       transactionHash: tx.hash,
-      storeId,
+      storeId: storeId.toString()  // Convert storeId to string explicitly
     });
   } catch (error) {
     console.error("Error adding store:", error);

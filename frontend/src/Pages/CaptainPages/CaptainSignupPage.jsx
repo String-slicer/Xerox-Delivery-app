@@ -105,91 +105,163 @@ const CaptainSignupPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600">
-      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Captain Sign Up</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
-            <div className="flex space-x-2">
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                className="mt-1 p-2 flex-1 border rounded-lg focus:outline-none"
-                required
-                disabled={otpVerified}
-              />
-              {!otpVerified && (
-                <button type="button" onClick={handleEmailVerify} className="bg-blue-500 text-white px-4 py-2 rounded-lg">
-                  Verify
-                </button>
-              )}
-            </div>
-          </div>
-
-          {otpSent && !otpVerified && (
+    <div className="relative flex size-full min-h-screen flex-col bg-[#131C24] dark group/design-root overflow-x-hidden font-sans">
+      <div className="layout-container flex h-full grow flex-col items-center justify-center px-4 py-10">
+        <div className="w-full max-w-md rounded-xl border border-[#32415D] bg-[#1D2A36] p-8 shadow-lg">
+          <h2 className="mb-8 text-center text-3xl font-bold text-[#F8F9FB]">Join Our Fleet</h2>
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="otp" className="block text-sm font-medium text-gray-700">Enter OTP</label>
-              <input
-                type="text"
-                id="otp"
-                name="otp"
-                value={formData.otp}
-                onChange={handleChange}
-                placeholder="Enter the OTP"
-                className="mt-1 p-2 w-full border rounded-lg"
-                required
-              />
-              <button type="button" onClick={handleOtpVerify} className="bg-green-500 text-white w-full py-2 mt-2 rounded-lg">
-                Verify OTP
-              </button>
+              <label htmlFor="email" className="block text-sm font-medium text-[#F8F9FB]">Email Address</label>
+              <div className="mt-2 flex space-x-2">
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Enter your email"
+                  className="flex-1 rounded-xl border border-[#32415D] bg-[#29374C] p-3 text-[#F8F9FB] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F4C753]"
+                  required
+                  disabled={otpVerified}
+                />
+                {!otpVerified && (
+                  <button 
+                    type="button" 
+                    onClick={handleEmailVerify} 
+                    className="rounded-xl bg-[#F4C753] px-4 py-2 font-bold text-[#141C24] transition-colors hover:bg-[#f3bc38]"
+                  >
+                    Verify
+                  </button>
+                )}
+              </div>
             </div>
-          )}
 
-            <>
+            {otpSent && !otpVerified && (
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
-                <input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required className="mt-1 p-2 w-full border rounded-lg" />
+                <label htmlFor="otp" className="block text-sm font-medium text-[#F8F9FB]">Enter OTP</label>
+                <input
+                  type="text"
+                  id="otp"
+                  name="otp"
+                  value={formData.otp}
+                  onChange={handleChange}
+                  placeholder="Enter the OTP"
+                  className="mt-2 w-full rounded-xl border border-[#32415D] bg-[#29374C] p-3 text-[#F8F9FB] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F4C753]"
+                  required
+                />
+                <button 
+                  type="button" 
+                  onClick={handleOtpVerify} 
+                  className="mt-2 w-full rounded-xl bg-[#32415D] px-4 py-3 font-bold text-[#F8F9FB] transition-colors hover:bg-[#3d4e6d]"
+                >
+                  Verify OTP
+                </button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div>
+                <label htmlFor="firstName" className="block text-sm font-medium text-[#F8F9FB]">First Name</label>
+                <input 
+                  type="text" 
+                  id="firstName" 
+                  name="firstName" 
+                  value={formData.firstName} 
+                  onChange={handleChange} 
+                  required 
+                  className="mt-2 w-full rounded-xl border border-[#32415D] bg-[#29374C] p-3 text-[#F8F9FB] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F4C753]"
+                />
               </div>
 
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
-                <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required className="mt-1 p-2 w-full border rounded-lg" />
+                <label htmlFor="lastName" className="block text-sm font-medium text-[#F8F9FB]">Last Name</label>
+                <input 
+                  type="text" 
+                  id="lastName" 
+                  name="lastName" 
+                  value={formData.lastName} 
+                  onChange={handleChange} 
+                  required 
+                  className="mt-2 w-full rounded-xl border border-[#32415D] bg-[#29374C] p-3 text-[#F8F9FB] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F4C753]"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="contact" className="block text-sm font-medium text-[#F8F9FB]">Contact Number</label>
+              <input 
+                type="text" 
+                id="contact" 
+                name="contact" 
+                value={formData.contact} 
+                onChange={handleChange} 
+                required 
+                className="mt-2 w-full rounded-xl border border-[#32415D] bg-[#29374C] p-3 text-[#F8F9FB] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F4C753]"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div>
+                <label htmlFor="vehicleColor" className="block text-sm font-medium text-[#F8F9FB]">Vehicle Color</label>
+                <input 
+                  type="text" 
+                  id="vehicleColor" 
+                  name="vehicleColor" 
+                  value={formData.vehicleColor} 
+                  onChange={handleChange} 
+                  required 
+                  className="mt-2 w-full rounded-xl border border-[#32415D] bg-[#29374C] p-3 text-[#F8F9FB] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F4C753]"
+                />
               </div>
 
               <div>
-                <label htmlFor="contact" className="block text-sm font-medium text-gray-700">Contact</label>
-                <input type="text" id="contact" name="contact" value={formData.contact} onChange={handleChange} required className="mt-1 p-2 w-full border rounded-lg" />
+                <label htmlFor="vehiclePlate" className="block text-sm font-medium text-[#F8F9FB]">Vehicle Plate</label>
+                <input 
+                  type="text" 
+                  id="vehiclePlate" 
+                  name="vehiclePlate" 
+                  value={formData.vehiclePlate} 
+                  onChange={handleChange} 
+                  required 
+                  className="mt-2 w-full rounded-xl border border-[#32415D] bg-[#29374C] p-3 text-[#F8F9FB] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F4C753]"
+                />
               </div>
+            </div>
 
-              <div>
-                <label htmlFor="vehicleColor" className="block text-sm font-medium text-gray-700">Vehicle Color</label>
-                <input type="text" id="vehicleColor" name="vehicleColor" value={formData.vehicleColor} onChange={handleChange} required className="mt-1 p-2 w-full border rounded-lg" />
-              </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-[#F8F9FB]">Password</label>
+              <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                value={formData.password} 
+                onChange={handleChange} 
+                required 
+                className="mt-2 w-full rounded-xl border border-[#32415D] bg-[#29374C] p-3 text-[#F8F9FB] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F4C753]"
+              />
+            </div>
 
-              <div>
-                <label htmlFor="vehiclePlate" className="block text-sm font-medium text-gray-700">Vehicle Plate</label>
-                <input type="text" id="vehiclePlate" name="vehiclePlate" value={formData.vehiclePlate} onChange={handleChange} required className="mt-1 p-2 w-full border rounded-lg" />
-              </div>
+            <div>
+              <label htmlFor="rePassword" className="block text-sm font-medium text-[#F8F9FB]">Confirm Password</label>
+              <input 
+                type="password" 
+                id="rePassword" 
+                name="rePassword" 
+                value={formData.rePassword} 
+                onChange={handleChange} 
+                required 
+                className="mt-2 w-full rounded-xl border border-[#32415D] bg-[#29374C] p-3 text-[#F8F9FB] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F4C753]"
+              />
+            </div>
 
-
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required className="mt-1 p-2 w-full border rounded-lg" />
-              </div>
-
-              <div>
-                <label htmlFor="rePassword" className="block text-sm font-medium text-gray-700">Re-enter Password</label>
-                <input type="password" id="rePassword" name="rePassword" value={formData.rePassword} onChange={handleChange} required className="mt-1 p-2 w-full border rounded-lg" />
-              </div>
-
-              <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg">Register</button>
-            </>
-        </form>
+            <button 
+              type="submit" 
+              className="w-full rounded-xl bg-[#F4C753] px-4 py-3 font-bold text-[#141C24] transition-colors hover:bg-[#f3bc38]"
+            >
+              Register as Captain
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

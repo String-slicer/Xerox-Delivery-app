@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 const UserSignupPage = () => {
   const [formData, setFormData] = useState({
@@ -9,14 +9,14 @@ const UserSignupPage = () => {
     lastName: "",
     password: "",
     rePassword: "",
-    contact: "", 
+    contact: "",
   });
 
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
-  const [serverOtp, setServerOtp] = useState(""); 
+  const [serverOtp, setServerOtp] = useState("");
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -36,20 +36,19 @@ const UserSignupPage = () => {
       const response = await fetch("http://localhost:4000/User/sendotp", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", 
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email:formData.email }),
+        body: JSON.stringify({ email: formData.email }),
       });
       const data = await response.json();
       if (data.success) {
         setServerOtp(data.otp);
         alert(`OTP sent to ${formData.email}`);
-        setOtpSent(true); 
+        setOtpSent(true);
       } else {
         alert(data.message);
       }
-    }
-    catch(error){
+    } catch (error) {
       console.log(error);
     }
   };
@@ -77,27 +76,26 @@ const UserSignupPage = () => {
       body: JSON.stringify(formData),
     });
     const data = await response.json();
-    console.log(data)
+    console.log(data);
     if (data.success) {
       alert("User registered successfully!");
       navigate("/userLogin");
     } else {
       alert(data.message);
     }
-
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600">
-      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          Sign Up
+    <div className="min-h-screen bg-[#131C24] flex items-center justify-center p-4 sm:p-6 md:p-8">
+      <div className="bg-[#1D2A36] p-6 rounded-xl shadow-lg w-full max-w-md border border-[#32415D]">
+        <h2 className="text-3xl font-bold text-[#F8F9FB] mb-8 text-center">
+          Create Account
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-[#F8F9FB] mb-2"
             >
               Email Address
             </label>
@@ -109,22 +107,20 @@ const UserSignupPage = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
-                className="mt-1 p-2 flex-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="flex-1 bg-[#29374C] text-[#F8F9FB] p-3 rounded-lg border border-[#32415D] focus:outline-none focus:ring-2 focus:ring-[#F4C753] placeholder-gray-400"
                 required
                 disabled={otpVerified}
               />
-              {
-                !otpVerified && 1? (
-              <button
-                type="button"
-                onClick={handleEmailVerify}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                disabled={otpVerified || !formData.email}
-              >
-                Verify
-              </button>
-                ):null
-              }
+              {!otpVerified && (
+                <button
+                  type="button"
+                  onClick={handleEmailVerify}
+                  className="bg-[#F4C753] text-[#141C24] px-6 py-3 rounded-lg hover:bg-[#f3bc38] focus:outline-none focus:ring-2 focus:ring-[#F4C753] font-bold"
+                  disabled={otpVerified || !formData.email}
+                >
+                  Verify
+                </button>
+              )}
             </div>
           </div>
 
@@ -132,7 +128,7 @@ const UserSignupPage = () => {
             <div>
               <label
                 htmlFor="otp"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-[#F8F9FB] mb-2"
               >
                 Enter OTP
               </label>
@@ -144,122 +140,123 @@ const UserSignupPage = () => {
                   value={formData.otp}
                   onChange={handleChange}
                   placeholder="Enter the OTP"
-                  className="mt-1 p-2 flex-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="flex-1 bg-[#29374C] text-[#F8F9FB] p-3 rounded-lg border border-[#32415D] focus:outline-none focus:ring-2 focus:ring-[#F4C753] placeholder-gray-400"
                   required
                 />
                 <button
                   type="button"
                   onClick={handleOtpVerify}
-                  className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="bg-[#32415D] text-[#F8F9FB] px-6 py-3 rounded-lg hover:bg-[#3d4e6a] focus:outline-none focus:ring-2 focus:ring-[#F4C753] font-bold"
                 >
                   Verify OTP
                 </button>
               </div>
             </div>
           )}
-            <>
-              <div>
-                <label
-                  htmlFor="firstName"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  placeholder="Enter your first name"
-                  className="mt-1 p-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  required
-                />
-              </div>
 
-              <div>
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  placeholder="Enter your last name"
-                  className="mt-1 p-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="contact"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Contact Number
-                </label>
-                <input
-                  type="text"
-                  id="contact"
-                  name="contact"
-                  value={formData.contact}
-                  onChange={handleChange}
-                  placeholder="Enter your contact number"
-                  className="mt-1 p-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Create a password"
-                  className="mt-1 p-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="rePassword"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Re-enter Password
-                </label>
-                <input
-                  type="password"
-                  id="rePassword"
-                  name="rePassword"
-                  value={formData.rePassword}
-                  onChange={handleChange}
-                  placeholder="Re-enter your password"
-                  className="mt-1 p-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label
+                htmlFor="firstName"
+                className="block text-sm font-medium text-[#F8F9FB] mb-2"
               >
-                Register
-              </button>
-            </>
+                First Name
+              </label>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                placeholder="Enter first name"
+                className="w-full bg-[#29374C] text-[#F8F9FB] p-3 rounded-lg border border-[#32415D] focus:outline-none focus:ring-2 focus:ring-[#F4C753] placeholder-gray-400"
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="lastName"
+                className="block text-sm font-medium text-[#F8F9FB] mb-2"
+              >
+                Last Name
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                placeholder="Enter last name"
+                className="w-full bg-[#29374C] text-[#F8F9FB] p-3 rounded-lg border border-[#32415D] focus:outline-none focus:ring-2 focus:ring-[#F4C753] placeholder-gray-400"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="contact"
+              className="block text-sm font-medium text-[#F8F9FB] mb-2"
+            >
+              Contact Number
+            </label>
+            <input
+              type="text"
+              id="contact"
+              name="contact"
+              value={formData.contact}
+              onChange={handleChange}
+              placeholder="Enter contact number"
+              className="w-full bg-[#29374C] text-[#F8F9FB] p-3 rounded-lg border border-[#32415D] focus:outline-none focus:ring-2 focus:ring-[#F4C753] placeholder-gray-400"
+              required
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-[#F8F9FB] mb-2"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Create password"
+              className="w-full bg-[#29374C] text-[#F8F9FB] p-3 rounded-lg border border-[#32415D] focus:outline-none focus:ring-2 focus:ring-[#F4C753] placeholder-gray-400"
+              required
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="rePassword"
+              className="block text-sm font-medium text-[#F8F9FB] mb-2"
+            >
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              id="rePassword"
+              name="rePassword"
+              value={formData.rePassword}
+              onChange={handleChange}
+              placeholder="Confirm password"
+              className="w-full bg-[#29374C] text-[#F8F9FB] p-3 rounded-lg border border-[#32415D] focus:outline-none focus:ring-2 focus:ring-[#F4C753] placeholder-gray-400"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-[#F4C753] text-[#141C24] py-3 px-4 rounded-lg hover:bg-[#f3bc38] focus:outline-none focus:ring-2 focus:ring-[#F4C753] font-bold text-sm transition-colors duration-200"
+          >
+            Create Account
+          </button>
         </form>
       </div>
     </div>

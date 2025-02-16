@@ -25,13 +25,15 @@ import UserOrdersPage from './Pages/UserPages/UserOrdersPage';
 import StoreOrdersPage from './Pages/StorePages/StoreOrdersPage';
 import CaptainOrdersPage from './Pages/CaptainPages/CaptainOrdersPage';
 import CaptainSettings from './Pages/CaptainPages/CaptainSettings';
-
+import LoginRedirect from './Pages/loginRedirect.jsx';
+import { MainLanding } from './Pages/MainLanding.jsx';
 function App() {
   return (
     <div>
         <Toaster/>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
+            {/* <Route path="/1" element={<LandingPage />} /> */}
+            <Route path="/" element={<MainLanding />} />
             <Route path="/captainHome" element={<CaptainHome/>} />
             <Route path="/userHome" element={<UserHome/>} />
             <Route path="/storeHome" element={<StoreHomePage/>} />
@@ -54,6 +56,7 @@ function App() {
            <Route path="/storeOrders" element={<StoreOrdersPage />} />
            <Route path="/captainOrders" element={<CaptainOrdersPage />} />
            <Route path="/captainSettings" element={<CaptainSettings />} />
+           <Route path="/middle-login" element={<LoginRedirect />} />
           </Routes>
         
     </div>
