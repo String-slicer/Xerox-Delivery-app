@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { storelogin } from "../../slices/storeSlice";
 import { useNavigate } from "react-router";
+import toast, { Toaster } from "react-hot-toast";
 
 const StoreLoginPage = () => {
   const [formData, setFormData] = useState({
@@ -34,13 +35,12 @@ const StoreLoginPage = () => {
       const data = await response.json();
       console.log(data)
       if (data.success) {
-        dispatch(storelogin(data.store)); // Dispatch storelogin action
+        dispatch(storelogin(data.store));
         localStorage.setItem('token', data.token)
-        alert("Login successful!");
+        toast.success("Login successful!");
         navigate("/storehome");
-        
       } else {
-        setLoginError(data.message || "Invalid credentials");
+        toast.error(data.message || "Invalid credentials");
       }
     } catch (error) {
       console.error("Error during login:", error.message);
@@ -131,6 +131,7 @@ const StoreLoginPage = () => {
           </div>
         </div>
       </div>
+      <Toaster position="top-center" />
     </div>
   );
 };

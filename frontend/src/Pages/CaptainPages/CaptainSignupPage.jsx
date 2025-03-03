@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import toast, { Toaster } from "react-hot-toast";
 
 const CaptainSignupPage = () => {
   const navigate=useNavigate();
@@ -28,7 +29,7 @@ const CaptainSignupPage = () => {
 
   const handleEmailVerify = async () => {
     if (!formData.email) {
-      alert("Please enter your email.");
+      toast.error("Please enter your email.");
       return;
     }
 
@@ -41,32 +42,33 @@ const CaptainSignupPage = () => {
       const data = await response.json();
       if (data.success) {
         setServerOtp(data.otp);
-        alert(`OTP sent to ${formData.email}`);
+        toast.success(`OTP sent to ${formData.email}`);
         setOtpSent(true);
       } else {
-        alert(data.message);
+        toast.error(data.message);
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to send OTP");
     }
   };
 
   const handleOtpVerify = () => {
     if (formData.otp === serverOtp) {
       setOtpVerified(true);
+      toast.success("Email verified successfully!");
     } else {
-      alert("Invalid OTP. Please try again.");
+      toast.error("Invalid OTP. Please try again.");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if(!otpVerified){
-      alert("Email is not verified");
+      toast.error("Email is not verified");
       return;
     }
     if (formData.password !== formData.rePassword) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
 
@@ -94,13 +96,13 @@ const CaptainSignupPage = () => {
       const data = await response.json();
       console.log(data);
       if (data.success) {
-        alert("Captain registered successfully!");
+        toast.success("Captain registered successfully!");
         navigate("/captainlogin");
       } else {
-        alert(data.message);
+        toast.error(data.message);
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to register");
     }
   };
 
@@ -263,6 +265,7 @@ const CaptainSignupPage = () => {
           </form>
         </div>
       </div>
+      <Toaster position="top-center" />
     </div>
   );
 };

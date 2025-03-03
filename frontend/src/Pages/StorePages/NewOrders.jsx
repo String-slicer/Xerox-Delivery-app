@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { SocketContext } from "../../context/socketcontext";
 import { useDispatch, useSelector } from "react-redux";
 import { acceptOrder, cancelOrder } from "../../slices/storeSlice";
+import { Toaster, toast } from "react-hot-toast";
 
 const NewOrders = () => {
   const [loadingOrderId, setLoadingOrderId] = useState(false);
@@ -16,7 +17,7 @@ const NewOrders = () => {
     const handleOrderStatusUpdate = (data) => {
       setLoadingOrderId(null);
       setAllocatedOrders((prevAllocatedOrders) => [...prevAllocatedOrders, data.orderId]);
-      alert(`Captain accepted for order ${data.orderId}`);
+      toast.success(`Captain accepted for order ${data.orderId}`);
     };
 
     socket.on("orderStatusUpdate", handleOrderStatusUpdate);
@@ -43,13 +44,13 @@ const NewOrders = () => {
       const data = await response.json();
       if (response.ok) {
         dispatch(acceptOrder(orderId));
-        alert(`Order ${orderId} Accepted.`);
+        toast.success(`Order ${orderId} Accepted.`);
       } else {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
     } catch (error) {
       console.error("Error accepting the order:", error);
-      alert("Failed to accept the order. Please try again.");
+      toast.error("Failed to accept the order. Please try again.");
     }
   };
 
@@ -58,10 +59,10 @@ const NewOrders = () => {
       setAllocatedOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
       socket.emit("cancel-order", { orderId, storeId: store._id });
       dispatch(cancelOrder(orderId));
-      alert(`Order ${orderId} Cancelled.`);
+      toast.success(`Order ${orderId} Cancelled.`);
     } catch (error) {
       console.error("Error canceling order:", error);
-      alert("Failed to cancel the order. Please try again.");
+      toast.error("Failed to cancel the order. Please try again.");
     }
   };
 
@@ -72,6 +73,7 @@ const NewOrders = () => {
 
   return (
     <div className="max-w-7xl mx-auto mt-4 sm:mt-8 p-2 sm:p-6">
+      <Toaster position="top-center" />
       <h2 className="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-6 text-[#F8F9FB]">New Orders</h2>
       {newOrders.length === 0 ? (
         <div className="text-center text-[#F8F9FB] py-8">No new orders</div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const UserSignupPage = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ const UserSignupPage = () => {
   const handleEmailVerify = async () => {
     console.log(formData.email);
     if (!formData.email) {
-      alert("Please enter your email.");
+      toast.error("Please enter your email.");
       return;
     }
 
@@ -43,28 +44,29 @@ const UserSignupPage = () => {
       const data = await response.json();
       if (data.success) {
         setServerOtp(data.otp);
-        alert(`OTP sent to ${formData.email}`);
+        toast.success(`OTP sent to ${formData.email}`);
         setOtpSent(true);
       } else {
-        alert(data.message);
+        toast.error(data.message);
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to send OTP");
     }
   };
 
   const handleOtpVerify = () => {
     if (formData.otp === serverOtp) {
       setOtpVerified(true);
+      toast.success("Email verified successfully!");
     } else {
-      alert("Invalid OTP. Please try again.");
+      toast.error("Invalid OTP. Please try again.");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.rePassword) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
     console.log("Signup Data Submitted:", formData);
@@ -78,10 +80,10 @@ const UserSignupPage = () => {
     const data = await response.json();
     console.log(data);
     if (data.success) {
-      alert("User registered successfully!");
+      toast.success("User registered successfully!");
       navigate("/userLogin");
     } else {
-      alert(data.message);
+      toast.error(data.message);
     }
   };
 
@@ -259,6 +261,7 @@ const UserSignupPage = () => {
           </button>
         </form>
       </div>
+      <Toaster position="top-center" />
     </div>
   );
 };

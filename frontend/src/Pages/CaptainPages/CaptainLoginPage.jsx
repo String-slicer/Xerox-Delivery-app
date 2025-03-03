@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { captainlogin } from "../../slices/captainSlice";
 import { useNavigate } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 
 const CaptainLoginPage = () => {
   const [formData, setFormData] = useState({
@@ -37,10 +37,10 @@ const CaptainLoginPage = () => {
       if (data.success) {
         dispatch(captainlogin(data.captain)); // Dispatch captainlogin action
         localStorage.setItem('token', data.token)
-        alert("Login successful!");
+        toast.success("Login successful!");
         navigate("/captainhome");
       } else {
-        setLoginError(data.message || "Invalid credentials");
+        toast.error(data.message || "Invalid credentials");
       }
     } catch (error) {
       console.error("Error during login:", error.message);
